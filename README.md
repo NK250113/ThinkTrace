@@ -25,11 +25,14 @@
 
 ## 実行方法
 - [ここをクリック](https://github.com/NK250113/) (本サービスにアクセスできます)
-  ※今は仮に私のGitHubへのリンクを貼っています
+
 - Dockerを起動して以下のコマンドを実行
   ``` bash
-  docker run memo_app
+  docker run ThinkTrace
   ```
+
+  ※現在準備中...
+
 ## 主な機能
 - 箇条書き機能
   - 独自の記号を用いた特殊な箇条書き
