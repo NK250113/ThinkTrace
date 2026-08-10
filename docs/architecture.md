@@ -16,7 +16,7 @@
 ## 設計
 ### ディレクトリ構成
 ```text
-memo-app/
+ThinkTrace/
 │
 ├── backend/
 │   ├── app/
@@ -47,11 +47,12 @@ memo-app/
 │   │   └── __init__.py
 │   │
 │   ├── tests/
-│   │   ├── 今後
-
+│   │   ├── test_auth.py
+│   │   └── test_memo.py
+│   │
 │   ├── requirements.txt
 │   ├── .env                # 機密情報を記載する(Gitには上げない)
-│   └── Dockerfile（必要なら）
+│   └── Dockerfile
 │
 ├── frontend/                 # React
 │   ├── public/
@@ -61,7 +62,7 @@ memo-app/
 │   │   ├── hooks/       # React特有の処理の記載
 │   │   ├── services/    # FastAPIへの通信(axios)
 │   │   ├── types/       # TypeScriptの型の記載
-│   │   ├── App.tsx
+│   │   ├── App.tsx0
 │   │   └── main.tsx
 │   │
 │   ├── package.json
