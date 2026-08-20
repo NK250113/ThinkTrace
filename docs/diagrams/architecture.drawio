@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="ZVSDSyneCa5oLg4W88OL" name="ページ1">
-        <mxGraphModel dx="816" dy="541" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="6400" pageHeight="4800" math="0" shadow="0">
+        <mxGraphModel dx="770" dy="305" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="6400" pageHeight="4800" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -24,6 +24,9 @@
                 </mxCell>
                 <mxCell id="5" value="PostgreSQL" style="rounded=0;whiteSpace=wrap;html=1;fontSize=20;labelBackgroundColor=none;" parent="1" vertex="1">
                     <mxGeometry y="360" width="160" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="Supabase" style="rounded=0;whiteSpace=wrap;html=1;fontSize=20;labelBackgroundColor=none;" vertex="1" parent="1">
+                    <mxGeometry x="310" y="50" width="160" height="40" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

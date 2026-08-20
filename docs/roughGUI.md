@@ -17,10 +17,10 @@
 3枚目はスマホで入力中のときの画面
 
 
-## 履歴との比較画面
+## 過去と比較する画面
 <div style="display:flex;">
-  <img src="./GUI/compare.svg" width="75%" style="margin-right: 10px;">
-  <img src="./GUI/cell_compare.svg" width="20%" style="margin-right: 10px;">
+  <img src="./GUI/trace.svg" width="75%" style="margin-right: 10px;">
+  <img src="./GUI/cell_trace.svg" width="20%" style="margin-right: 10px;">
 </div>
 
 ## 設定画面
