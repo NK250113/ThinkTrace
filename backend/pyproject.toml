@@ -1,0 +1,20 @@
+[project]
+name = "ThinkTrace-backend"
+version = "0.1.0"
+description = "FastAPI backend of my app ThinkTrace"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "SQLAlchemy",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "httpx",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
