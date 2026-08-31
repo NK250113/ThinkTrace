@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from app.core import models
 from app.feature.auth.exceptions import RegisteredEmailError
 
-async def insert_user(db: AsyncSession, user: models.User = None) -> models.User:
+async def insert_user(db: AsyncSession, user: models.Users = None) -> models.Users:
     try:
         db.add(user)
         await db.commit()
@@ -19,11 +19,11 @@ async def insert_user(db: AsyncSession, user: models.User = None) -> models.User
 
     return user
 
-async def get_user_by_email(db: AsyncSession, email: str) -> models.User | None:
-    result = await db.execute(select(models.User).where(models.User.email == email))
+async def get_user_by_email(db: AsyncSession, email: str) -> models.Users | None:
+    result = await db.execute(select(models.Users).where(models.Users.email == email))
     user = result.scalar_one_or_none()
     return user
 
-async def get_user_by_id(db: AsyncSession, user_id: int) -> models.User | None:
-    user = await db.scalar(select(models.User).where(models.User.id == user_id))
+async def get_user_by_id(db: AsyncSession, user_id: int) -> models.Users | None:
+    user = await db.scalar(select(models.Users).where(models.Users.id == user_id))
     return user

@@ -24,22 +24,8 @@ async def register_user(db: AsyncSession, user: auth_schemas.UserCreate) -> core
         raise exceptions.PasswordTooLongError()
     if len(user.name) > 32:
         raise exceptions.UsernameTooLongError()
-    while True:
-        try:
-            db_user = await repository.insert_user(db, models.User(
-                name=user.name,
-                email=user.email,
-                hashed_password=user.password,
-                usercode=''.join([choice(string.ascii_letters.replace('l', '').replace('I', '').replace('O', '') + string.digits) for _ in range(randint(8, 12))])
-            ))
-            break
-        except exceptions.RegisteredUsercodeError:
-            pass
-    return auth_schemas.UserResponse(
-        id=db_user.id,
-        name=db_user.name,
-        email=db_user.email
-    )
+    db_user = await repository.insert_user(db, user.convert())
+    return auth_schemas.UserResponse(db_user)
 
 async def login_user(db: AsyncSession, user: auth_schemas.UserLogin) -> core_schemas.Token:
     input_password = security.get_password_hash(user.password)

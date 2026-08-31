@@ -11,7 +11,7 @@ from app.core.schemas import security as core_schemas
 from app.core.config import settings
 from app.feature.auth import repository, schemas as auth_schemas, exceptions
 
-async def get_current_user(db: AsyncSession, token: Annotated[str, Depends(security.oauth2_scheme)]):
+async def get_current_user(db: AsyncSession, token: Annotated[str, Depends(security.oauth2_scheme)]) -> auth_schemas.UserResponse:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -21,11 +21,11 @@ async def get_current_user(db: AsyncSession, token: Annotated[str, Depends(secur
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         user_id = payload.get("sub")
         if user_id is None:
-            raise credentials_exception
+            raise exceptions.unauthorizedError
         token_data = core_schemas.TokenData(id=user_id)
     except InvalidTokenError:
-        raise credentials_exception
+        raise exceptions.unauthorizedError
     user = await repository.get_user_by_id(db, user_id=token_data.id)
     if user is None:
-        raise credentials_exception
+        raise exceptions.unauthorizedError
     return user

@@ -5,7 +5,7 @@ from app.core import database
 from app.core.responses import http_responses
 from app.feature.auth import schemas, service
 
-app = APIRouter()
+app = APIRouter(prefix="/api")
 
 @app.post("/register/send",
     response_model=None,
