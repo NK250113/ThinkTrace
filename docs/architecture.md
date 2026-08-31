@@ -59,14 +59,14 @@ ThinkTrace/
 │   └── Dockerfile
 │
 ├── frontend/         # React
-│   ├── public/
-│   ├── src/
+│   ├── public/           # そのまま公開する画像やテキストなど
+│   ├── src/              # Reactのファイル
 │   │   ├── components/       # HTMLに載せる部品
 │   │   ├── pages/            # 各ページの基本的なHTML
-│   │   ├── hooks/            # React特有の処理の記載
+│   │   ├── hooks/            # フロント側の状態管理・React固有の処理
 │   │   ├── services/         # FastAPIへの通信(axios)
 │   │   ├── types/            # TypeScriptの型の記載
-│   │   ├── App.tsx0
+│   │   ├── App.tsx
 │   │   └── main.tsx
 │   │
 │   ├── package.json
