@@ -21,6 +21,9 @@ class HTTPResponses():
             }
         }
     def get(self, *status_codes: int):
-        return {code: self.at(code) for code in status_codes}
+        d = {}
+        for code in status_codes:
+            d.update(self.at(code))
+        return d
 
 http_responses = HTTPResponses()

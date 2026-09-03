@@ -4,7 +4,7 @@
 - JavaScript
 ### フレームワーク
 - React
-- TipTapというのが使えるらしい
+- TipTapを使用予定
 ### インフラ
 - Docker
 - Render
@@ -18,63 +18,80 @@
 ```text
 ThinkTrace/
 │
-├── backend/          # Python, FastAPI
-│   ├── app/              # APIを記述する部分
-│   │   ├── feature/           # 各機能ごとの処理
-│   │   │   ├── users/             # ユーザ自体に関する処理を記述する
-│   │   │   │   ├── routes.py          # APIを受け取って対応する機能を呼び出す
-│   │   │   │   ├── schemas.py         # APIのデータ受け渡し形式をクラスとして定義する
-│   │   │   │   ├── deps.py            # 認証や認可を行う処理を依存関係としての形式に整える(必須ではない)
-│   │   │   │   ├── service.py         # アプリの処理を記述する
-│   │   │   │   ├── repository.py      # DBに対しての処理を記述する
-│   │   │   │   ├── exceptions.py      # 発生しうるエラーを定義する
-│   │   │   │   └── except_handler.py  # エラーの発生に応じた通信の内容を記述する
+├── backend/         # Python, FastAPI
+│   ├── app/             # APIを記述する部分
+│   │   ├── feature/          # 各機能ごとの処理
+│   │   │   ├── users/            # ユーザ自体に関する処理を記述する
+│   │   │   │   ├── routes.py         # APIを受け取って対応する機能を呼び出す
+│   │   │   │   ├── schemas.py        # APIのデータ受け渡し形式をクラスとして定義する
+│   │   │   │   ├── deps.py           # 認証や認可を行う処理を依存関係としての形式に整える(必須ではない)
+│   │   │   │   ├── service.py        # アプリの処理を記述する
+│   │   │   │   ├── repository.py     # DBに対しての処理を記述する
+│   │   │   │   ├── exceptions.py     # 発生しうるエラーを定義する
+│   │   │   │   └── except_handler.py # エラーの発生に応じた通信の内容を記述する
 │   │   │   │
-│   │   │   │   # ※ 以下にもusersと同様のファイルがあるが存在するが省略する
-│   │   │   ├── auth/              # 認証などに関する処理を記述する
-│   │   │   ├── memo/              # メモの編集に関する処理を記述する
-│   │   │   └── trace/             # 履歴機能に関する処理を記述する
+│   │   │   │  # ※ 以下にもusersと同様のファイルがあるが存在するが省略する
+│   │   │   ├── auth/             # 認証などに関する処理を記述する
+│   │   │   ├── note/             # メモの編集に関する処理を記述する
+│   │   │   └── trace/            # 履歴機能に関する処理を記述する
 │   │   │
-│   │   ├── core/           # あらゆる機能で共通する処理
-│   │   │   ├── schemas/           # 上記のschemasと同様
-│   │   │   │   └── error/                 # エラー時の通信におけるデータ受け渡し形式を定義する
-│   │   │   │   └── security/              # セキュリティに関わる通信におけるデータ受け渡し形式を定義する
-│   │   │   ├── database.py        # データベースとの接続を行う
-│   │   │   ├── models.py          # DBに対してデータ受け渡し形式をクラスとして定義する
-│   │   │   ├── config.py          # 機密情報等(.envファイル)を読み込んでまとめる
-│   │   │   ├── security.py        # アプリの構造に依存しないセキュリティ関連の一般的な処理
-│   │   │   └── responses.py       # HTTPレスポンスの文章などを再利用のためにまとめる
+│   │   ├── core/          # あらゆる機能で共通する処理
+│   │   │   ├── schemas/          # 上記のschemasと同様
+│   │   │   │   └── error/                # エラー時の通信におけるデータ受け渡し形式を定義する
+│   │   │   │   └── security/             # セキュリティに関わる通信におけるデータ受け渡し形式を定義する
+│   │   │   ├── database.py       # データベースとの接続を行う
+│   │   │   ├── models.py         # DBに対してデータ受け渡し形式をクラスとして定義する
+│   │   │   ├── config.py         # 機密情報等(.envファイル)を読み込んでまとめる
+│   │   │   ├── security.py       # アプリの構造に依存しないセキュリティ関連の一般的な処理
+│   │   │   └── responses.py      # HTTPレスポンスの文章などを再利用のためにまとめる
 │   │   │
-│   │   ├── main.py            # FastAPIの起動
-│   │   └── __init__.py        # ここからがPythonのアプリ本体であることを示すマーカー
+│   │   ├── main.py           # FastAPIの起動
+│   │   └── __init__.py       # ここからがPythonのアプリ本体であることを示すマーカー
 │   │
-│   ├── tests/            # APIのテストを行う
+│   ├── tests/           # APIのテストを行う
 │   │   ├── test_users.py
 │   │   └── test_auth.py
 │   │   ├── test_memo.py
 │   │   └── test_trace.py
 │   │
 │   ├── requirements.txt
-│   ├── .env              # 機密情報を記載する(Gitには上げない)
+│   ├── .env             # 機密情報を記載する(Gitには上げない)
 │   └── Dockerfile
 │
-├── frontend/         # React
+├── frontend/         # React, Next.js
+│   ├── api/              # openapi-typescriptによる自動生成フォルダ
+│   │   └── generated.ts      # バックエンドでの型定義などを自動で翻訳
+│   │
+│   ├── app/              # Next.jsが特殊なファイルとして読み込むフォルダ
+│   │   ├── 各種フォルダ/      # ルーティングと各ページを構成
+│   │   ├── page.ts           # デフォルトページを設定
+│   │   ├── layout.ts         # 全ページに共通するページの枠組み
+│   │   └── globals.css       # 全ページに共通するCSS
+│   │
 │   ├── public/           # そのまま公開する画像やテキストなど
 │   ├── src/              # Reactのファイル
-│   │   ├── components/       # HTMLに載せる部品
-│   │   ├── pages/            # 各ページの基本的なHTML
-│   │   ├── hooks/            # フロント側の状態管理・React固有の処理
-│   │   ├── services/         # FastAPIへの通信(axios)
-│   │   ├── types/            # TypeScriptの型の記載
-│   │   ├── App.tsx
-│   │   └── main.tsx
+│   │   ├── featured/         # 機能ごとの処理
+│   │   │   ├── users/            # 機能の分け方はバックエンドと同じなのでそちらを参照
+│   │   │   │   ├── components.tsx    # このページで使う部品を定義
+│   │   │   │   ├── hooks.ts          # フロント側の状態管理・React固有の処理
+│   │   │   │   ├── service.ts        # FastAPIへの通信(axios)
+│   │   │   │   └── types.ts          # TypeScriptの型の記載
+│   │   │   │
+│   │   │   ├── auth/             # 認証などに関する処理を記述する
+│   │   │   ├── note/             # メモの編集に関する処理を記述する
+│   │   │   └── trace/            # 履歴機能に関する処理を記述する
+│   │   │
+│   │   ├── shared/           # 複数の機能で共通する処理(中はusersと同様)
+│   │   │
+│   │   ├── App.tsx           # ルーティングなどを担当
+│   │   └── main.tsx          # 最初に表示するページなどを設定
 │   │
 │   ├── package.json
-│   └── vite.config.ts
+│   └── next.config.ts
 │
 ├── README.md
 ├── .gitignore
-└── render.yaml（任意）
+└── render.yaml
 ```
 
 ### アーキテクチャ

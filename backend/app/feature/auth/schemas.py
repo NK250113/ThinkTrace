@@ -25,8 +25,9 @@ class UserResponse(BaseModel):
     id: int
     name: str
     email: str
-    def __init__(self, user: models.Users | None = None):
+    def create(self, user: models.Users | None = None):
         if user is not None:
             self.id = user.id
             self.name = user.name
             self.email = user.email
+            return self

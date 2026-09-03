@@ -10,9 +10,6 @@ class NonExistentEmailError(Exception):
 class RegisteredEmailError(Exception):
     pass
 
-class RegisteredUsercodeError(Exception):
-    pass
-
 class PasswordTooShortError(Exception):
     pass
 

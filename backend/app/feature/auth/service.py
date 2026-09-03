@@ -13,19 +13,23 @@ async def send_email_verification(db: AsyncSession, user: auth_schemas.sendUserC
     # メール送信処理をここに実装する
     return
 
-async def register_user(db: AsyncSession, user: auth_schemas.UserCreate) -> core_schemas.Token:
+async def signup_user(db: AsyncSession, user: auth_schemas.UserCreate) -> core_schemas.Token:
     if any(not i for i in [user.name, user.password, user.email]):
         raise exceptions.RequiredFieldsAreMissingError()
-    if not match(r"[^@]+@[^@]+\.[^@]+", user.email):
+    if not match(r"^[^\s@]+@[^\s@]+\.[^\s@]+$", user.email):
         raise exceptions.InvalidEmailFormatError()
     if len(user.password) < 8:
         raise exceptions.PasswordTooShortError()
     if len(user.password) > 64:
         raise exceptions.PasswordTooLongError()
-    if len(user.name) > 32:
+    if len(user.name) > 64:
         raise exceptions.UsernameTooLongError()
     db_user = await repository.insert_user(db, user.convert())
-    return auth_schemas.UserResponse(db_user)
+    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = security.create_access_token(
+        data={"sub": db_user.id}, expires_delta=access_token_expires
+    )
+    return core_schemas.Token(access_token=access_token, token_type="bearer")
 
 async def login_user(db: AsyncSession, user: auth_schemas.UserLogin) -> core_schemas.Token:
     input_password = security.get_password_hash(user.password)

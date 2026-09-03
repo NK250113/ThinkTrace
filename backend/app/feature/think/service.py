@@ -3,7 +3,7 @@ from re import match
 from random import choice, randint
 
 from app.core import models
-from app.feature.note import repository, schemas, exceptions
+from app.feature.think import repository, schemas, exceptions
 
 
 async def load_note_display(db: AsyncSession, user_id: int) -> dict[int, str]:
@@ -12,17 +12,17 @@ async def load_note_display(db: AsyncSession, user_id: int) -> dict[int, str]:
     tags = {tag_id: await repository.get_tag_name(db, tag_id) for tag_id in set(tag_ids) | set(priv_tag_ids)}
     return tags
 
-async def search_notes(db: AsyncSession, term: schemas.NotesSearch, user_id: int) -> list[schemas.NoteInfo]:
-    notes = await repository.search_notes(db, term.tags, user_id)
-    return [schemas.NoteInfo(note) for note in notes]
+async def search_notes(db: AsyncSession, tags: list[int], user_id: int) -> list[schemas.NoteInfo]:
+    notes = await repository.search_notes(db, tags, user_id)
+    return [schemas.NoteInfo.create(note) for note in notes]
 
 async def load_note(db: AsyncSession, user_id: int, note_id: int) -> schemas.NoteAllInfo:
-    note = schemas.NoteAllInfo(await repository.get_note_by_id(db, note_id))
+    note = schemas.NoteAllInfo.create(await repository.get_note_by_id(db, note_id))
     if not note:
         raise exceptions.NoteNotFoundError(note_id)
     note.tags = {tag_id: await repository.get_tag_name(db, tag_id) for tag_id in await repository.get_used_tags(db, user_id)}
     note.priv_tags = {tag_id: await repository.get_tag_name(db, tag_id) for tag_id in await repository.get_used_priv_tags(db, user_id)}
-    note.lines = [schemas.Line(line) for line in await repository.get_lines(db, note_id)]
+    note.lines = [schemas.Line.create(line) for line in await repository.get_lines(db, note_id)]
     return note
 
 async def commit_note(db: AsyncSession, user_id: int, note: schemas.NoteContent, commit_name: str) -> schemas.failureCommitLines:

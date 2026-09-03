@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 
 from app.core.schemas.error import ErrorResponse
-from app.feature.note import exceptions
+from app.feature.think import exceptions
 
 
 async def note_not_found(
@@ -30,4 +30,14 @@ async def required_fields_missing(
     return JSONResponse(
         status_code=400,
         content=jsonable_encoder(error),
+    )
+
+def exception_handler_note_not_found(app: FastAPI):
+    app.add_exception_handler(
+        exceptions.NoteNotFoundError,
+        note_not_found,
+    )
+    app.add_exception_handler(
+        exceptions.RequiredFieldsAreMissingError,
+        required_fields_missing,
     )

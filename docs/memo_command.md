@@ -1,7 +1,8 @@
 # 重要なコマンド
 pip install -r requirements.txt：ライブラリを全て導入する
 .venv/Scripts/Activate.ps1：仮想環境に入る(backendに移動の後行うこと)
-uvicorn app.main:app --reload：アプリの実行
+uvicorn app.main:app --reload：バックエンドの実行
+npm run dev：フロントエンドの実行
 
 # Dockerの使用方法
 初回： docker compose up --build
@@ -31,3 +32,5 @@ git push origin v1.0.0
 alembic revision --autogenerate -m "create users table"
 alembic upgrade head
 
+# schemas.py→types.tsへの変換
+npm run generate-api

@@ -78,7 +78,7 @@ async def append_tag(db: AsyncSession, note_id: int, tag_id: int) -> None:
     db.add(note_tag)
     await db.commit()
 
-async def priv_append_tag(db: AsyncSession, note_id: int, tag_id: int, user_id: int) -> None:
+async def append_priv_tag(db: AsyncSession, note_id: int, tag_id: int, user_id: int) -> None:
     note_tag = models.NoteTags(note_id=note_id, tag_id=tag_id, is_public=False, user_id=user_id)
     db.add(note_tag)
     await db.commit()

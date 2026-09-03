@@ -5,6 +5,7 @@ from fastapi.encoders import jsonable_encoder
 from app.core.schemas.error import ErrorResponse
 from app.feature.auth import exceptions
 
+
 async def required_fields_are_missing(
     request: Request,
     exc: exceptions.RequiredFieldsAreMissingError,
@@ -96,7 +97,7 @@ async def unauthorized(
         status_code=status.HTTP_401_UNAUTHORIZED,
         content=jsonable_encoder(error),
     )
-def exception_handler_register_user(app: FastAPI):
+def exception_handler_signup_user(app: FastAPI):
     app.add_exception_handler(
         exceptions.RequiredFieldsAreMissingError,
         required_fields_are_missing,

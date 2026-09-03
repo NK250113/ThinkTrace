@@ -3,11 +3,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core import database
 from app.core.responses import http_responses
+from app.core.schemas import security as core_schemas
 from app.feature.auth import schemas, service
 
 app = APIRouter(prefix="/api")
 
-@app.post("/register/send",
+@app.post("/signup/send",
     response_model=None,
     responses={
         200: {
@@ -15,15 +16,15 @@ app = APIRouter(prefix="/api")
         }
     }
 )
-async def send_register_email(
+async def send_signup_email(
     db: AsyncSession = Depends(database.get_db),
     user: schemas.sendUserCreate = None
 ) -> None:
     await service.send_email_verification(db, user.email)
     return
 
-@app.post("/register/confirm",
-    response_model=schemas.UserResponse,
+@app.post("/signup/confirm",
+    response_model=core_schemas.Token,
     responses=http_responses.get(
         status.HTTP_400_BAD_REQUEST,
         status.HTTP_409_CONFLICT,
@@ -33,11 +34,11 @@ async def send_register_email(
 async def login_user(
     db: AsyncSession = Depends(database.get_db),
     user: schemas.UserCreate = None
-) -> schemas.UserResponse:
-    return await service.register_user(db, user)
+) -> core_schemas.Token:
+    return await service.signup_user(db, user)
 
-@app.get("/login",
-    response_model=schemas.UserResponse,
+@app.post("/login",
+    response_model=core_schemas.Token,
     responses=http_responses.get(
         status.HTTP_401_UNAUTHORIZED,
     ),
@@ -45,5 +46,5 @@ async def login_user(
 async def login_user(
     db: AsyncSession = Depends(database.get_db),
     user: schemas.UserLogin = None
-) -> schemas.UserResponse:
+) -> core_schemas.Token:
     return await service.login_user(db, user)

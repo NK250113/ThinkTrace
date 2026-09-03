@@ -10,8 +10,9 @@ from app.core import models, security
 from app.core.schemas import security as core_schemas
 from app.core.config import settings
 from app.feature.auth import repository, schemas as auth_schemas, exceptions
+from app.core import database
 
-async def get_current_user(db: AsyncSession, token: Annotated[str, Depends(security.oauth2_scheme)]) -> auth_schemas.UserResponse:
+async def get_current_user(db: Annotated[AsyncSession, Depends(database.get_db)], token: Annotated[str, Depends(security.oauth2_scheme)]) -> auth_schemas.UserResponse:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
