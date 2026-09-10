@@ -72,7 +72,7 @@ ThinkTrace/
 │   ├── src/              # Reactのファイル
 │   │   ├── featured/         # 機能ごとの処理
 │   │   │   ├── users/            # 機能の分け方はバックエンドと同じなのでそちらを参照
-│   │   │   │   ├── components.tsx    # このページで使う部品を定義
+│   │   │   │   ├── components/       # このページで使う部品を定義
 │   │   │   │   ├── hooks.ts          # フロント側の状態管理・React固有の処理
 │   │   │   │   ├── service.ts        # FastAPIへの通信(axios)
 │   │   │   │   └── types.ts          # TypeScriptの型の記載
@@ -81,10 +81,7 @@ ThinkTrace/
 │   │   │   ├── note/             # メモの編集に関する処理を記述する
 │   │   │   └── trace/            # 履歴機能に関する処理を記述する
 │   │   │
-│   │   ├── shared/           # 複数の機能で共通する処理(中はusersと同様)
-│   │   │
-│   │   ├── App.tsx           # ルーティングなどを担当
-│   │   └── main.tsx          # 最初に表示するページなどを設定
+│   │   └── shared/           # 複数の機能で共通する処理(中はusersと同様)
 │   │
 │   ├── package.json
 │   └── next.config.ts

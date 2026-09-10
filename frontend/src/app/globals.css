@@ -6,6 +6,9 @@
   *::after {
     box-sizing: border-box;
   }
+  button {
+    cursor: pointer;
+  }
 }
 
 :root {
@@ -13,12 +16,19 @@
   --content-bg: #ffffff;
   --subcontent-bg: #fafafa;
   --foreground: #171717;
+  --font-color: #888888;
   --accent-color: #44ffcc;
+  --text-color-for-accent: #ffffff;
 }
 
 @theme inline {
   --color-background: var(--page-bg);
   --color-foreground: var(--foreground);
+  --color-accent: var(--accent-color);
+  --color-content: var(--content-bg);
+  --color-subcontent: var(--subcontent-bg);
+  --color-font: var(--font-color);
+  --color-accent-text: var(--text-color-for-accent);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -28,12 +38,13 @@
     --page-bg: #0a0a0a;
     --content-bg: #181818;
     --subcontent-bg: #1c1c1c;
-    --foreground: #ededed;
+    --foreground: #606060;
+    --font-color: #ededed;
   }
 }
 
 body {
   background: var(--page-bg);
-  color: var(--foreground);
+  color: var(--color-font);
   font-family: Arial, Helvetica, sans-serif;
 }
