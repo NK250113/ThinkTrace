@@ -10,7 +10,7 @@ export async function getTags() {
 }; // また後でstyle, explode辺りの調整が必要、422のエラー形式を直す必要あり
 
 type searchNotesProps = {
-    tags: string[];
+    tags: number[];
 }
 export async function searchNotes({ tags }: searchNotesProps) {
     const { data, error } = await client.GET("/api/think/search", {
@@ -27,7 +27,7 @@ export async function searchNotes({ tags }: searchNotesProps) {
 };
 
 type getNoteProps = {
-    note_id: string;
+    note_id: number;
 }
 export async function getNote({ note_id }: getNoteProps) {
     const { data, error } = await client.GET("/api/think/{note_id}", {

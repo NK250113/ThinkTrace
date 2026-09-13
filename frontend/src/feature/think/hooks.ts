@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 
-import { getTags, searchNotes, getNote } from './services';
+import { getNote, getTags, searchNotes } from './services';
 
 export function useTag() {
     type TagInfo = {
-        id: string;
+        id: number;
         name: string;
         count: number;
         selected: boolean;
@@ -15,12 +15,13 @@ export function useTag() {
 
     async function fetchTags() {
         type TagData = {
+            id: number;
             name: string;
             count: number;
         }
         const data = await getTags(); // またあとでバックエンドを調整する必要がある
-        setAllTags(data.map((item: TagData) =>
-            { id: item.id, name: item.name, count: item.count, selected: false, disabled: false }
+        setAllTags(data.map((item: TagData): TagInfo =>
+            ({ id: item.id, name: item.name, count: item.count, selected: false, disabled: false })
         ));
     }
     useEffect(() => {
@@ -32,7 +33,7 @@ export function useTag() {
         }
     }, []);
 
-    const selectTag = (id: string) => {
+    const selectTag = (id: number) => {
         const newArray = new Array(...allTags);
         for (const tag of newArray) {
             if (tag.id === id) {
@@ -41,7 +42,7 @@ export function useTag() {
         }
         setAllTags(newArray);
     };
-    const deselectTag = (id: string) => {
+    const deselectTag = (id: number) => {
         const newArray = new Array(...allTags);
         for (const tag of newArray) {
             if (tag.id === id) {
@@ -83,7 +84,7 @@ export function useTag() {
         setAllTags(newArray);
     }
 
-    function getSelectedTags(): string[] {
+    function getSelectedTags(): number[] {
         return Array.from(allTags.values())
             .filter(({ selected }) => selected)
             .map(({ id }) => id);
@@ -94,16 +95,21 @@ export function useTag() {
 
 export function useFile() {
     type FileInfo = {
-        id: string;
+        id: number;
         name: string;
-        created_at: number;
-        updated_at: number;
+        created_at: Date;
+        updated_at: Date;
     };
     const [files, setFiles] = useState<FileInfo[]>([]);
     const [sortCriteria, setSortCriteria] = useState<"name"|"created_at"|"updated_at">("updated_at"); // 更新日時、作成日時、名前
 
     const searchFiles = async () => {
-        const data = await searchNotes({ tags: useTag().getSelectedTags() });
+        const raw_data = await searchNotes({ tags: useTag().getSelectedTags() });
+        const data = raw_data.map((item) => ({
+            ...item,
+            created_at: new Date(item.created_at),
+            updated_at: new Date(item.updated_at),
+        }));
         setFiles(data);
         switch (sortCriteria) {
             case "name":
@@ -118,7 +124,7 @@ export function useFile() {
         }
     }
 
-    const selectFile = async (note_id: string) => {
+    const selectFile = async (note_id: number) => {
         const data = await getNote({ note_id });
     };
 
@@ -132,14 +138,14 @@ export function useFile() {
     function sortFilesByCreatedAt() {
         setSortCriteria("created_at");
         const newArray = new Array(...files);
-        newArray.sort((a, b) => a.created_at - b.created_at);
+        newArray.sort((a, b) => a.created_at.getTime() - b.created_at.getTime());
         setFiles(newArray);
     }
 
     function sortFilesByUpdatedAt() {
         setSortCriteria("updated_at");
         const newArray = new Array(...files);
-        newArray.sort((a, b) => a.updated_at - b.updated_at);
+        newArray.sort((a, b) => a.updated_at.getTime() - b.updated_at.getTime());
         setFiles(newArray);
     }
 

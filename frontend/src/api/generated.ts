@@ -55,7 +55,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/note/load": {
+    "/api/think/load": {
         parameters: {
             query?: never;
             header?: never;
@@ -63,7 +63,7 @@ export interface paths {
             cookie?: never;
         };
         /** Load Note Display */
-        get: operations["load_note_display_api_note_load_get"];
+        get: operations["load_note_display_api_think_load_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -72,7 +72,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/note/search": {
+    "/api/think/search": {
         parameters: {
             query?: never;
             header?: never;
@@ -80,7 +80,7 @@ export interface paths {
             cookie?: never;
         };
         /** Search Notes */
-        get: operations["search_notes_api_note_search_get"];
+        get: operations["search_notes_api_think_search_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -89,7 +89,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/note/{note_id}": {
+    "/api/think/{note_id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -97,7 +97,7 @@ export interface paths {
             cookie?: never;
         };
         /** Load Note */
-        get: operations["load_note_api_note__note_id__get"];
+        get: operations["load_note_api_think__note_id__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -106,7 +106,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/note/{note_id}/commit": {
+    "/api/think/{note_id}/commit": {
         parameters: {
             query?: never;
             header?: never;
@@ -116,14 +116,14 @@ export interface paths {
         get?: never;
         put?: never;
         /** Commit Note */
-        post: operations["commit_note_api_note__note_id__commit_post"];
+        post: operations["commit_note_api_think__note_id__commit_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/note/{note_id}/add_tag": {
+    "/api/think/{note_id}/add_tag": {
         parameters: {
             query?: never;
             header?: never;
@@ -133,14 +133,14 @@ export interface paths {
         get?: never;
         put?: never;
         /** Add Tag */
-        post: operations["add_tag_api_note__note_id__add_tag_post"];
+        post: operations["add_tag_api_think__note_id__add_tag_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/note/{note_id}/add_tag_priv": {
+    "/api/think/{note_id}/add_tag_priv": {
         parameters: {
             query?: never;
             header?: never;
@@ -150,7 +150,7 @@ export interface paths {
         get?: never;
         put?: never;
         /** Add Tag */
-        post: operations["add_tag_api_note__note_id__add_tag_priv_post"];
+        post: operations["add_tag_api_think__note_id__add_tag_priv_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -161,16 +161,12 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        /** ErrorDetail */
-        ErrorDetail: {
+        /** ErrorResponse */
+        ErrorResponse: {
             /** Code */
             code: string;
             /** Message */
             message: string;
-        };
-        /** ErrorResponse */
-        ErrorResponse: {
-            error: components["schemas"]["ErrorDetail"];
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -194,6 +190,16 @@ export interface components {
             id: number;
             /** Name */
             name: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
             /** Tags */
             tags: {
                 [key: string]: string;
@@ -218,6 +224,25 @@ export interface components {
             id: number;
             /** Name */
             name: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** TagInfo */
+        TagInfo: {
+            /** Id */
+            id: number;
+            /** Name */
+            name: string;
+            /** Count */
+            count: number;
         };
         /** Token */
         Token: {
@@ -400,7 +425,7 @@ export interface operations {
             };
         };
     };
-    load_note_display_api_note_load_get: {
+    load_note_display_api_think_load_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -415,9 +440,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        [key: string]: string;
-                    };
+                    "application/json": components["schemas"]["TagInfo"][];
                 };
             };
             /** @description Not Found */
@@ -431,7 +454,7 @@ export interface operations {
             };
         };
     };
-    search_notes_api_note_search_get: {
+    search_notes_api_think_search_get: {
         parameters: {
             query: {
                 tags: number[];
@@ -462,7 +485,7 @@ export interface operations {
             };
         };
     };
-    load_note_api_note__note_id__get: {
+    load_note_api_think__note_id__get: {
         parameters: {
             query?: never;
             header?: never;
@@ -502,7 +525,7 @@ export interface operations {
             };
         };
     };
-    commit_note_api_note__note_id__commit_post: {
+    commit_note_api_think__note_id__commit_post: {
         parameters: {
             query: {
                 commit_name: string;
@@ -546,7 +569,7 @@ export interface operations {
             };
         };
     };
-    add_tag_api_note__note_id__add_tag_post: {
+    add_tag_api_think__note_id__add_tag_post: {
         parameters: {
             query: {
                 tag_name: string;
@@ -588,7 +611,7 @@ export interface operations {
             };
         };
     };
-    add_tag_api_note__note_id__add_tag_priv_post: {
+    add_tag_api_think__note_id__add_tag_priv_post: {
         parameters: {
             query: {
                 tag_name: string;
