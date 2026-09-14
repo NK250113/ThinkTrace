@@ -1,16 +1,21 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from re import match
-from random import choice, randint
+from collections import Counter
 
 from app.core import models
 from app.feature.think import repository, schemas, exceptions
 
 
-async def load_note_display(db: AsyncSession, user_id: int) -> dict[int, str]:
-    tag_ids = await repository.get_used_tags(db, user_id=user_id)
-    priv_tag_ids = await repository.get_used_priv_tags(db, user_id=user_id)
-    tags = {tag_id: await repository.get_tag_name(db, tag_id) for tag_id in set(tag_ids) | set(priv_tag_ids)}
-    return tags
+
+async def load_note_display(db: AsyncSession, user_id: int) -> list[schemas.TagInfo]:
+    tags = await repository.get_used_tags(db, user_id=user_id)
+    tags = {id: schemas.TagInfo(id=tag_id, name=await repository.get_tag_name(db, tag_id), count=count) for tag_id, count in tags}
+    priv_tags = await repository.get_used_priv_tags(db, user_id=user_id)
+    for tag_id, count in priv_tags:
+        cur = tags.get(tag_id, schemas.TagInfo(id=tag_id, name=await repository.get_tag_name(db, tag_id), count=0))
+        cur.count += count
+        tags[tag_id] = cur
+    return tags.values()
 
 async def search_notes(db: AsyncSession, tags: list[int], user_id: int) -> list[schemas.NoteInfo]:
     notes = await repository.search_notes(db, tags, user_id)

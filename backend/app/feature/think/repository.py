@@ -1,20 +1,25 @@
-from sqlalchemy import select, intersect
+from sqlalchemy import select, intersect, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core import models
 
 
-async def get_used_tags(db: AsyncSession, user_id: int) -> list[int] | None:
-    result = await db.execute(select(models.NoteTags.tag_id).where(
-        models.NoteTags.note_id == select(models.Notes.id).where(models.Notes.id == user_id)
-    ))
-    return result.scalars().all()
+async def get_used_tags(db: AsyncSession, user_id: int) -> list[tuple[int, int]]:
+    result = await db.execute(
+        select(models.NoteTags.tag_id, func.count(models.NoteTags.note_id).label("count"))
+        .join(models.Notes, models.Notes.id == models.NoteTags.note_id)
+        .where(models.Notes.user_id == user_id)
+        .group_by(models.NoteTags.tag_id)
+    )
+    return result.all()
 
-async def get_used_priv_tags(db: AsyncSession, user_id: int) -> list[int] | None:
-    result = await db.execute(select(models.NoteTags.tag_id).where(
-        models.NoteTags.user_id == user_id
-    ))
-    return result.scalars().all()
+async def get_used_priv_tags(db: AsyncSession, user_id: int) -> list[tuple[int, int]]:
+    result = await db.execute(
+        select(models.NoteTags.tag_id, func.count(models.NoteTags.note_id).label("count"))
+        .where(models.NoteTags.user_id == user_id)
+        .group_by(models.NoteTags.tag_id)
+    )
+    return result.all()
 
 async def get_tag_name(db: AsyncSession, tag_id: int) -> str | None:
     result = await db.execute(select(models.Tags.content).where(models.Tags.id == tag_id))
@@ -25,11 +30,11 @@ async def get_note_by_id(db: AsyncSession, note_id: int) -> models.Notes | None:
     note = result.scalar_one_or_none()
     return note
 
-async def search_notes(db: AsyncSession, tag_ids: list[models.Tags], user_id: int) -> list[models.Notes]:
+async def search_notes(db: AsyncSession, tag_ids: list[int], user_id: int) -> list[models.Notes]:
     queries = [
         select(models.NoteTags.note_id).where(
             (models.NoteTags.is_public or models.NoteTags.user_id == user_id)
-            and models.NoteTags.tag_id == tag.id
+            and models.NoteTags.tag_id == tag
         )
         for tag in tag_ids
     ]

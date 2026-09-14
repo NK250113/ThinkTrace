@@ -4,8 +4,19 @@ from app.feature.auth import except_handler as auth_exceptions
 from app.feature.think import except_handler as think_exceptions
 from app.feature.auth.routes import app as auth_routes
 from app.feature.think.routes import app as think_routes
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(auth_routes)
 app.include_router(think_routes)

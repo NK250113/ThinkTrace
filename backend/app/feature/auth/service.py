@@ -24,12 +24,18 @@ async def signup_user(db: AsyncSession, user: auth_schemas.UserCreate) -> core_s
         raise exceptions.PasswordTooLongError()
     if len(user.name) > 64:
         raise exceptions.UsernameTooLongError()
-    db_user = await repository.insert_user(db, user.convert())
-    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = security.create_access_token(
-        data={"sub": db_user.id}, expires_delta=access_token_expires
-    )
-    return core_schemas.Token(access_token=access_token, token_type="bearer")
+
+    try:
+        db_user = await repository.insert_user(db, user.convert())
+        access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token = security.create_access_token(
+            data={"sub": db_user.id}, expires_delta=access_token_expires
+        )
+        await db.commit()
+        return core_schemas.Token(access_token=access_token, token_type="bearer")
+    except Exception:
+        await db.rollback()
+        raise
 
 async def login_user(db: AsyncSession, user: auth_schemas.UserLogin) -> core_schemas.Token:
     input_password = security.get_password_hash(user.password)

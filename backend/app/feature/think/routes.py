@@ -8,10 +8,10 @@ from app.feature.think import schemas, service
 from app.feature.auth.deps import get_current_user
 from app.feature.auth.schemas import UserResponse
 
-app = APIRouter(prefix="/api/note")
+app = APIRouter(prefix="/api/think")
 
-@app.get("/load", response_model=dict[int, str], responses={404: {"model": error.ErrorResponse}})
-async def load_note_display(user: UserResponse = Depends(get_current_user), db: AsyncSession = Depends(database.get_db)) -> dict[int, str]:
+@app.get("/load", response_model=list[schemas.TagInfo], responses={404: {"model": error.ErrorResponse}})
+async def load_note_display(user: UserResponse = Depends(get_current_user), db: AsyncSession = Depends(database.get_db)) -> list[schemas.TagInfo]:
     tags = await service.load_note_display(db, user_id=user.id)
     return tags
 

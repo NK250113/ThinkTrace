@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+import datetime
 
 from app.core import models
 
@@ -24,25 +25,39 @@ class NoteContent(BaseModel):
 
 # レスポンス
 
+class TagInfo(BaseModel):
+    id: int
+    name: str
+    count: int
+
 class NoteAllInfo(BaseModel):
     id: int
     name: str
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
     tags: dict[int, str]
     priv_tags: dict[int, str]
     lines: list[Line]
-    def create(self, user: models.Notes | None = None):
-        if user is not None:
-            self.id = user.id
-            self.name = user.name
+    def create(self, note: models.Notes | None = None):
+        if note is not None:
+            self.id = note.id
+            self.name = note.name
+            self.created_at = note.created_at
+            self.updated_at = note.updated_at
             return self
 
 class NoteInfo(BaseModel):
     id: int
     name: str
-    def create(self, user: models.Notes | None = None):
-        if user is not None:
-            self.id = user.id
-            self.name = user.name
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+    def create(self, note: models.Notes | None = None):
+        if note is not None:
+            self.id = note.id
+            self.name = note.name
+            self.created_at = note.created_at
+            self.updated_at = note.updated_at
+
             return self
 
 class failureCommitLines(BaseModel):

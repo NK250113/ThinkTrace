@@ -8,11 +8,10 @@ from app.feature.auth.exceptions import RegisteredEmailError
 async def insert_user(db: AsyncSession, user: models.Users = None) -> models.Users:
     try:
         db.add(user)
-        await db.commit()
+        await db.flush()
         await db.refresh(user)
 
     except IntegrityError as e:
-        await db.rollback()
         if "uq_users_email" in str(e):
             raise RegisteredEmailError()
         raise
