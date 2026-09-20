@@ -4,6 +4,23 @@
  */
 
 export interface paths {
+    "/api/test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Test */
+        post: operations["test_api_test_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/signup/send": {
         parameters: {
             query?: never;
@@ -299,6 +316,26 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    test_api_test_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string;
+                };
+            };
+        };
+    };
     send_signup_email_api_signup_send_post: {
         parameters: {
             query?: never;

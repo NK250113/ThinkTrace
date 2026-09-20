@@ -8,6 +8,11 @@ from app.feature.auth import schemas, service
 
 app = APIRouter(prefix="/api")
 
+@app.post("/test",
+    response_model=str,
+)
+async def test() -> str:
+    return "Test successful"
 @app.post("/signup/send",
     response_model=None,
     responses={

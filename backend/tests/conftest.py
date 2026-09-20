@@ -1,6 +1,6 @@
 import asyncio
 
-import pytest
+import pytest, pytest_asyncio
 from alembic import command
 from alembic.config import Config
 from httpx import ASGITransport, AsyncClient
@@ -13,6 +13,7 @@ from sqlalchemy.ext.asyncio import (
 from testcontainers.community.postgres import PostgresContainer
 
 from app.core.database import get_db
+from app.core import models
 from app.main import app
 
 
@@ -27,7 +28,7 @@ def postgres():
         yield container
 
 
-@pytest.fixture(scope="session")
+@pytest_asyncio.fixture(scope="session")
 async def migrated_db(postgres):
     url = make_url(postgres.get_connection_url())
     url = url.set(drivername="postgresql+psycopg")
@@ -46,8 +47,7 @@ async def migrated_db(postgres):
 
     yield
 
-
-@pytest.fixture
+@pytest_asyncio.fixture
 async def engine(postgres):
     url = make_url(postgres.get_connection_url())
     url = url.set(drivername="postgresql+asyncpg")
@@ -59,7 +59,7 @@ async def engine(postgres):
     await engine.dispose()
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def db(engine, migrated_db):
     connection = await engine.connect()
     transaction = await connection.begin()
@@ -82,7 +82,7 @@ async def db(engine, migrated_db):
         await connection.close()
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def client(db):
     async def override_get_db():
         yield db
@@ -98,3 +98,18 @@ async def client(db):
         yield client
 
     app.dependency_overrides.clear()
+
+@pytest_asyncio.fixture
+async def test_user(db):
+    user = models.Users(
+        name="testuser",
+        email="test@example.com",
+        hashed_password="hashedpassword",
+    )
+
+    db.add(user)
+
+    await db.commit()
+    await db.refresh(user)
+
+    return user

@@ -15,6 +15,7 @@ dependencies = [
     "pwdlib==0.3.1",
     "argon2-cffi==25.1.0",
     "python-multipart==0.0.32",
+    "python-jose[cryptography]==3.5.0"
 ]
 
 [project.optional-dependencies]

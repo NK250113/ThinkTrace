@@ -1,5 +1,10 @@
 import pytest
-"""
+from datetime import datetime, timedelta, timezone
+
+from app.core.config import settings
+from app.core.security import create_access_token
+from app.feature.auth.deps import get_current_user
+
 @pytest.mark.asyncio
 async def test_signup_success(client):
     response = await client.post(
@@ -19,11 +24,4 @@ async def test_signup_success(client):
     assert body["token_type"] == "bearer"
     assert "refresh_token" in body
     assert body["refresh_token_type"] == "bearer"
-"""
-# 1. 正常系
-# 2. メール重複
-# 3. パスワードが短い
-# 4. パスワードが長い
-# 5. 名前が長い
-# 6. メール形式が不正
-# 7. 必須項目がない
+

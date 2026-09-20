@@ -1,5 +1,5 @@
-export function AppLogo({h}: {h: string}) {
+export function AppLogo({className}: {className: string}) {
     return (
-        <img src="public/logo.svg" className={`h-${h}`}>ThinkTrace</img>
+        <img src="logo.svg" className={className}/>
     );
 }
