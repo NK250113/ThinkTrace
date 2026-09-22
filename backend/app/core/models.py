@@ -1,4 +1,5 @@
-from sqlalchemy import String, Index, Text, DateTime, BigInteger, Identity
+import uuid
+from sqlalchemy import UUID, Index, Text, DateTime
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey
 from datetime import datetime
@@ -10,10 +11,10 @@ class Base(DeclarativeBase):
 class Users(Base):
     __tablename__ = "users"
 
-    id: Mapped[int] = mapped_column(BigInteger, Identity(), primary_key=True)
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4,)
     name: Mapped[str] = mapped_column(Text) # SQLインジェクション対策はSQLAlchemyに任せる
-    hashed_password: Mapped[str] = mapped_column(String(100))
-    email: Mapped[str] = mapped_column(String(100), unique=True)
+    hashed_password: Mapped[str] = mapped_column(Text)
+    email: Mapped[str] = mapped_column(Text, unique=True)
 
     notes: Mapped[list["Notes"]] = relationship(back_populates="author")
     tags: Mapped[list["NoteTags"]] = relationship(back_populates="tag_adder")
@@ -24,9 +25,9 @@ class Users(Base):
 class Notes(Base):
     __tablename__ = "notes"
 
-    id: Mapped[int] = mapped_column(BigInteger, Identity(), primary_key=True)
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4,)
     name: Mapped[str] = mapped_column(Text)
-    user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"))
+    author_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
@@ -39,17 +40,17 @@ class Notes(Base):
 class Tags(Base):
     __tablename__ = "tags"
 
-    id: Mapped[int] = mapped_column(BigInteger, Identity(), primary_key=True)
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4,)
     content: Mapped[str] = mapped_column(Text, unique=True)
     used: Mapped[list["NoteTags"]] = relationship(back_populates="tag")
 
 class NoteTags(Base):
     __tablename__ = "note_tags"
 
-    note_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("notes.id"), primary_key=True)
-    tag_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("tags.id"), primary_key=True)
+    note_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("notes.id"), primary_key=True)
+    tag_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("tags.id"), primary_key=True)
     is_public: Mapped[bool] = mapped_column(default=True)
-    user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"), primary_key=True)
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), primary_key=True)
 
     tag_adder: Mapped["Users"] = relationship(back_populates="tags")
     note: Mapped["Notes"] = relationship(back_populates="tags")
@@ -65,7 +66,7 @@ class NoteTags(Base):
 
 class LineMixin:
     __abstract__ = True
-    id: Mapped[int] = mapped_column(BigInteger, Identity(), primary_key=True)
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4,)
     content: Mapped[str] = mapped_column(Text)
     logic_type: Mapped[int] = mapped_column()
     sort_order: Mapped[int] = mapped_column()
@@ -73,18 +74,18 @@ class LineMixin:
 class Lines(LineMixin, Base):
     __tablename__ = "lines"
 
-    note_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("notes.id"), index=True)
-    parent_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("lines.id"))
+    note_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("notes.id"), index=True)
+    parent_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("lines.id"))
     note: Mapped["Notes"] = relationship(back_populates="lines")
 
 class Commits(Base):
     __tablename__ = "commits"
 
-    id: Mapped[int] = mapped_column(BigInteger, Identity(), primary_key=True, index=True)
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, index=True)
     name: Mapped[str] = mapped_column(Text)
     time: Mapped[datetime] = mapped_column(DateTime(timezone=True))
-    user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"))
-    note_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("notes.id"))
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"))
+    note_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("notes.id"))
 
     lines: Mapped[list["CommitLines"]] = relationship(back_populates="commit")
     note: Mapped["Notes"] = relationship(back_populates="commits")
@@ -92,15 +93,16 @@ class Commits(Base):
 class CommitLines(LineMixin, Base):
     __tablename__ = "commit_lines"
 
-    commit_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("commits.id"), index=True)
-    parent_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("commit_lines.id"))
+    commit_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("commits.id"), index=True)
+    parent_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("commit_lines.id"))
     commit: Mapped["Commits"] = relationship(back_populates="lines")
 
 class Guests(Base):
     __tablename__ = "guests"
 
-    user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"), primary_key=True)
-    note_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("notes.id"), primary_key=True)
+
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), primary_key=True)
+    note_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("notes.id"), primary_key=True)
     auth_type: Mapped[int] = mapped_column()
 
     guest_user: Mapped["Users"] = relationship(back_populates="invited_notes")
@@ -109,15 +111,15 @@ class Guests(Base):
 class Settings(Base):
     __tablename__ = "settings"
 
-    user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"), primary_key=True)
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), primary_key=True)
     # 中身はいろいろ終わってから
     user: Mapped["Users"] = relationship(back_populates="settings")
 
 class Inquiries(Base):
     __tablename__ = "inquiries"
 
-    id: Mapped[int] = mapped_column(BigInteger, Identity(), primary_key=True)
-    user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"))
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4,)
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"))
     content: Mapped[str] = mapped_column(Text)
     time: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     inquiry_type: Mapped[int] = mapped_column()
