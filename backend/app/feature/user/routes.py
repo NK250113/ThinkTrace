@@ -8,12 +8,19 @@ from app.feature.auth.deps import get_current_user
 from app.feature.auth.schemas import UserResponse
 
 
-app = APIRouter(prefix="/api/users")
+router = APIRouter(prefix="/api/users")
 
-@app.post("/me",
+@router.post("/me",
     response_model=UserResponse,
     responses={
     }
 )
 async def get_user_info(user: UserResponse = Depends(get_current_user), db: AsyncSession = Depends(database.get_db)) -> UserResponse:
     return user
+
+
+@router.post("/test",
+    response_model=str,
+)
+async def test(user: UserResponse = Depends(get_current_user)) -> str:
+    return user.email
