@@ -34,7 +34,7 @@ function AuthText(props: React.ComponentProps<"input">) {
         <input
             {...props}
             autoCapitalize="off" // 頭文字を大文字にしない
-            className = "w-full rounded-sm bg-subcontent border-2 focus-visible:outline-none focus-visible:border-accent"
+            className = "w-full rounded-sm bg-subcontent border-2 shadow-accent focus-visible:outline-none focus-visible:border-accent focus-visible:shadow-[0_0_5px]"
         />
     );
 }

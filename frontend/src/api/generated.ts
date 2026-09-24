@@ -4,24 +4,7 @@
  */
 
 export interface paths {
-    "/api/test": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Test */
-        post: operations["test_api_test_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/signup/send": {
+    "/api/auth/signup/send": {
         parameters: {
             query?: never;
             header?: never;
@@ -31,14 +14,31 @@ export interface paths {
         get?: never;
         put?: never;
         /** Send Signup Email */
-        post: operations["send_signup_email_api_signup_send_post"];
+        post: operations["send_signup_email_api_auth_signup_send_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/signup/confirm": {
+    "/api/auth/signup/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Signup User */
+        post: operations["signup_user_api_auth_signup_confirm_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/login": {
         parameters: {
             query?: never;
             header?: never;
@@ -48,14 +48,14 @@ export interface paths {
         get?: never;
         put?: never;
         /** Login User */
-        post: operations["login_user_api_signup_confirm_post"];
+        post: operations["login_user_api_auth_login_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/login": {
+    "/api/auth/logout": {
         parameters: {
             query?: never;
             header?: never;
@@ -64,8 +64,25 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Login User */
-        post: operations["login_user_api_login_post"];
+        /** Logout */
+        post: operations["logout_api_auth_logout_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/auth/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Refresh Access Token */
+        post: operations["refresh_access_token_api_auth_auth_refresh_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -174,6 +191,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/users/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Get User Info */
+        post: operations["get_user_info_api_users_me_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -200,6 +234,11 @@ export interface components {
             parent_id: number | null;
             /** Sort Order */
             sort_order: number;
+        };
+        /** Message */
+        Message: {
+            /** Message */
+            message: string;
         };
         /** NoteAllInfo */
         NoteAllInfo: {
@@ -261,13 +300,6 @@ export interface components {
             /** Count */
             count: number;
         };
-        /** Token */
-        Token: {
-            /** Access Token */
-            access_token: string;
-            /** Token Type */
-            token_type: string;
-        };
         /** UserCreate */
         UserCreate: {
             /** Name */
@@ -283,6 +315,18 @@ export interface components {
             email: string;
             /** Password */
             password: string;
+        };
+        /** UserResponse */
+        UserResponse: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Email */
+            email: string;
         };
         /** ValidationError */
         ValidationError: {
@@ -316,27 +360,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    test_api_test_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": string;
-                };
-            };
-        };
-    };
-    send_signup_email_api_signup_send_post: {
+    send_signup_email_api_auth_signup_send_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -369,7 +393,7 @@ export interface operations {
             };
         };
     };
-    login_user_api_signup_confirm_post: {
+    signup_user_api_auth_signup_confirm_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -388,7 +412,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Token"];
+                    "application/json": components["schemas"]["Message"];
                 };
             };
             /** @description Bad Request */
@@ -420,7 +444,7 @@ export interface operations {
             };
         };
     };
-    login_user_api_login_post: {
+    login_user_api_auth_login_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -439,7 +463,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Token"];
+                    "application/json": components["schemas"]["Message"];
                 };
             };
             /** @description Unauthorized */
@@ -462,12 +486,76 @@ export interface operations {
             };
         };
     };
+    logout_api_auth_logout_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                refresh_token?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Logout successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Message"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    refresh_access_token_api_auth_auth_refresh_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                refresh_token?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     load_note_display_api_think_load_get: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
-            cookie?: never;
+            cookie?: {
+                access_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -489,6 +577,15 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
         };
     };
     search_notes_api_think_search_get: {
@@ -498,7 +595,9 @@ export interface operations {
             };
             header?: never;
             path?: never;
-            cookie?: never;
+            cookie?: {
+                access_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -529,7 +628,9 @@ export interface operations {
             path: {
                 note_id: number;
             };
-            cookie?: never;
+            cookie?: {
+                access_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -569,7 +670,9 @@ export interface operations {
             };
             header?: never;
             path?: never;
-            cookie?: never;
+            cookie?: {
+                access_token?: string | null;
+            };
         };
         requestBody: {
             content: {
@@ -657,7 +760,9 @@ export interface operations {
             path: {
                 note_id: number;
             };
-            cookie?: never;
+            cookie?: {
+                access_token?: string | null;
+            };
         };
         requestBody?: never;
         responses: {
@@ -677,6 +782,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_user_info_api_users_me_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: {
+                access_token?: string | null;
+            };
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserResponse"];
                 };
             };
             /** @description Validation Error */
