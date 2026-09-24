@@ -124,3 +124,13 @@ class Inquiries(Base):
     time: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     inquiry_type: Mapped[int] = mapped_column()
     inquirer: Mapped["Users"] = relationship(back_populates="inquiries")
+
+class RefreshToken(Base):
+    __tablename__ = "refresh_tokens"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True)
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True)
+    family_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), nullable=False, index=True)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)

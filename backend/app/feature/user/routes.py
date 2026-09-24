@@ -1,3 +1,4 @@
+from typing import Annotated
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -15,12 +16,5 @@ router = APIRouter(prefix="/api/users")
     responses={
     }
 )
-async def get_user_info(user: UserResponse = Depends(get_current_user), db: AsyncSession = Depends(database.get_db)) -> UserResponse:
+async def get_user_info(user: Annotated[UserResponse, Depends(get_current_user)]) -> UserResponse:
     return user
-
-
-@router.post("/test",
-    response_model=str,
-)
-async def test(user: UserResponse = Depends(get_current_user)) -> str:
-    return user.email

@@ -1,6 +1,8 @@
 from pydantic import BaseModel
+from uuid import UUID
 
 from app.core import models
+from app.core.schemas import security as core_schemas
 
 
 class sendUserCreate(BaseModel):
@@ -22,12 +24,21 @@ class UserLogin(BaseModel):
     password: str
 
 class UserResponse(BaseModel):
-    id: int
+    id: UUID
     name: str
     email: str
-    def create(self, user: models.Users | None = None):
-        if user is not None:
-            self.id = user.id
-            self.name = user.name
-            self.email = user.email
-            return self
+
+    @classmethod
+    def create(cls, user: models.Users) -> "UserResponse":
+        return cls(
+            id=user.id,
+            name=user.name,
+            email=user.email
+        )
+
+class TokenResponse(BaseModel):
+    access_token: str
+    refresh_token: str
+
+class Message(BaseModel):
+    message: str

@@ -1,6 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
+from uuid import UUID
 
 from app.core import models
 from app.feature.auth.exceptions import RegisteredEmailError
@@ -23,6 +24,31 @@ async def get_user_by_email(db: AsyncSession, email: str) -> models.Users | None
     user = result.scalar_one_or_none()
     return user
 
-async def get_user_by_id(db: AsyncSession, user_id: int) -> models.Users | None:
+async def get_user_by_id(db: AsyncSession, user_id: UUID) -> models.Users | None:
     user = await db.scalar(select(models.Users).where(models.Users.id == user_id))
     return user
+
+async def insert_refresh_token(db: AsyncSession, refresh_token: models.RefreshToken) -> models.RefreshToken:
+    try:
+        db.add(refresh_token)
+        await db.flush()
+        await db.refresh(refresh_token)
+
+    except IntegrityError as e:
+        if "uq_users_email" in str(e):
+            raise RegisteredEmailError()
+        raise
+
+    return refresh_token
+
+async def get_refresh_token(
+    db: AsyncSession,
+    token_id: UUID,
+) -> models.RefreshToken | None:
+
+    result = await db.execute(
+        select(models.RefreshToken)
+        .where(models.RefreshToken.id == token_id)
+    )
+
+    return result.scalar_one_or_none()

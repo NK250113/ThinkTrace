@@ -1,9 +1,6 @@
 from pydantic import BaseModel
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-
-
+# 一旦消してみてエラーにならないか確認
+"""
 class TokenData(BaseModel):
     id: int | None = None
+"""

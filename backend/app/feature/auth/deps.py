@@ -1,32 +1,78 @@
-from datetime import datetime, timedelta, timezone
 from typing import Annotated
-
-import jwt
-from fastapi import Depends, HTTPException, status
-from jwt.exceptions import InvalidTokenError
+from fastapi import Depends, Cookie
+from jose import JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
+from uuid import UUID
+from datetime import datetime, timezone
 
-from app.core import models, security
-from app.core.schemas import security as core_schemas
-from app.core.config import settings
-from app.feature.auth import repository, schemas as auth_schemas, exceptions
-from app.core import database
+from app.core.security import decode_token
+from app.feature.auth import repository, exceptions, schemas
+from app.core import database, models
 
-async def get_current_user(db: Annotated[AsyncSession, Depends(database.get_db)], token: Annotated[str, Depends(security.oauth2_scheme)]) -> auth_schemas.UserResponse:
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
+
+async def get_current_user(
+    db: Annotated[AsyncSession, Depends(database.get_db)],
+    access_token: Annotated[str | None, Cookie()] = None,
+) -> schemas.UserResponse:
+    if access_token is None:
+        raise exceptions.NonExistentAccessTokenError()
     try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        payload = decode_token(access_token)
+
+        if payload.get("type") != "access":
+            raise exceptions.InvalidAccessTokenError()
+
         user_id = payload.get("sub")
+
         if user_id is None:
-            raise exceptions.unauthorizedError
-        token_data = core_schemas.TokenData(id=user_id)
-    except InvalidTokenError:
-        raise exceptions.unauthorizedError
-    user = await repository.get_user_by_id(db, user_id=token_data.id)
+            raise exceptions.InvalidAccessTokenError()
+
+    except JWTError:
+        raise exceptions.InvalidAccessTokenError()
+
+    user = await repository.get_user_by_id(db, user_id=user_id)
+
     if user is None:
-        raise exceptions.unauthorizedError
-    return user
+        raise exceptions.InvalidAccessTokenError()
+
+    return schemas.UserResponse.create(user)
+
+
+async def get_current_refresh_token(
+    db: Annotated[AsyncSession, Depends(database.get_db)],
+    refresh_token: Annotated[str | None, Cookie()] = None,
+) -> models.RefreshToken:
+    if refresh_token is None:
+        raise exceptions.NonExistentRefreshTokenError()
+
+    try:
+        payload = decode_token(refresh_token)
+
+        if payload.get("type") != "refresh":
+            raise exceptions.InvalidRefreshTokenError()
+
+        user_id = payload.get("sub")
+        jti = payload.get("jti")
+
+        if user_id is None or jti is None:
+            raise exceptions.InvalidRefreshTokenError()
+
+    except JWTError:
+        raise exceptions.InvalidRefreshTokenError()
+
+    token = await repository.get_refresh_token(
+        db,
+        token_id=UUID(jti),
+    )
+
+    if token is None:
+        raise exceptions.InvalidRefreshTokenError()
+
+    if token.revoked_at is not None:
+        print(f"Token revoked at: {token.revoked_at}")
+        raise exceptions.InvalidRefreshTokenError()
+
+    if token.expires_at <= datetime.now(timezone.utc):
+        raise exceptions.InvalidRefreshTokenError()
+
+    return token
