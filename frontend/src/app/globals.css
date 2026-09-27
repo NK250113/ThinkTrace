@@ -72,3 +72,18 @@ body {
   color: var(--color-font);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+:is(.tiptap, .viewer) {
+  ul {
+    @apply pl-6;
+  }
+  li {
+    @apply relative list-none;
+  }
+
+  li::before {
+    content: "";
+    @apply absolute -left-6 top-0.5 size-4.5 bg-contain bg-center bg-no-repeat;
+    background-image: var(--bullet-image);
+  }
+}

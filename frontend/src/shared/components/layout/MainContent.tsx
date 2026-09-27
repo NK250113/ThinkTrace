@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 
 export function FileBar({children}: {children: React.ReactNode}) {
@@ -7,17 +8,17 @@ export function FileBar({children}: {children: React.ReactNode}) {
         </div>
     );
 }
-type helpBar = {
+type helpBarProps = {
     contents: {title: string, content: React.ReactNode}[];
 }
-export function HelpBar({contents}: helpBar) {
+export function HelpBar({contents}: helpBarProps) {
     const [activeTab, setActiveTab] = useState(0);
     return (
         <div className="w-1/4 bg-content border-l-2 border-foreground">
             <div className="bg-foreground flex gap-px justify-start">
                 {contents.map((item, idx) => (
                     <button type="button" onClick={() => setActiveTab(idx)}
-                    className={`bg-content rounded-t-xs border-foreground ${activeTab === idx ? "border-b-2" : "border-none"}`}>
+                    className={`px-1 bg-content rounded-t-xs border-foreground ${activeTab === idx ? "border-none" : "border-b-2"}`}>
                     {item.title}</button>
                 ))}
             </div>

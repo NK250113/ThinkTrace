@@ -1,6 +1,8 @@
+"use client";
 import { useRef } from "react";
 
 import FilePane from "@/src/feature/think/components/FilePane";
+import MainPane from "@/src/feature/think/components/MainPane";
 import TagPane from "@/src/feature/think/components/TagPane";
 import { Header } from "@/src/shared/components/layout/Header";
 import { FileBar, HelpBar } from "@/src/shared/components/layout/MainContent";
@@ -11,15 +13,13 @@ export default function ThinkPage() {
     return (
         <>
             <Header></Header>
-            <div>
+            <div className="flex flex-1 w-full">
                 <FileBar>
                     <TagPane ref={firstRef}></TagPane>
                     <ResizerY targetRef={firstRef} minHeight={100} maxHeight={500}/>
                     <FilePane></FilePane>
                 </FileBar>
-                <div className="flex-1">
-                    <p>メイン部分</p>
-                </div>
+                <MainPane></MainPane>
                 <HelpBar contents={[
                     {title: "test1", content: <></>},
                     {title: "test2", content: <></>},

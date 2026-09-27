@@ -1,3 +1,4 @@
+"use client";
 import { useState, type PointerEvent, type RefObject } from "react";
 
 type ResizerProps = {

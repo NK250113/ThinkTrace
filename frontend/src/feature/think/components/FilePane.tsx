@@ -8,7 +8,7 @@ export default function FileListPane({ref}: {ref?: React.Ref<HTMLDivElement>;}) 
     return (
         <div ref={ref}>
             <div className="flex gap-0.5">
-                <SubmitButton content="上のタグでファイルを探す" size="fit" disabled={true}/>
+                <SubmitButton content="探す" size="free" disabled={true}/>
                 <p>並び替え：</p>
                 <button type="button" onClick={sortFilesByCreatedAt} className={sortCriteria=="updated_at" ? "" : "hidden"}>(作成日順)</button>
                 <button type="button" onClick={sortFilesByName} className={sortCriteria=="created_at" ? "" : "hidden"}>(更新日順)</button>
