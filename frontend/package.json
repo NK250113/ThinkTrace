@@ -10,6 +10,7 @@
     "generate-api": "openapi-typescript http://localhost:8000/openapi.json -o src/api/generated.ts"
   },
   "dependencies": {
+    "@tabler/icons-react": "^3.48.0",
     "@tiptap/pm": "^3.31.3",
     "@tiptap/react": "^3.31.3",
     "@tiptap/starter-kit": "^3.31.3",

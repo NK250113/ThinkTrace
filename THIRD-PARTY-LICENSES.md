@@ -31,6 +31,11 @@ Apache License 2.0
 ### ESLint
 MIT License
 
+### Tabler Icons
+MIT License
+
+Copyright (c) 2018-2026 Tabler Authors.
+
 ## Backend
 
 ### FastAPI
