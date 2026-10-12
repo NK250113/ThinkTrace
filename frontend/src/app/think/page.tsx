@@ -1,8 +1,8 @@
 "use client";
 import { useRef } from "react";
 
-import FilePane from "@/src/feature/think/components/FilePane";
 import MainPane from "@/src/feature/think/components/MainPane";
+import FilePane from "@/src/feature/think/components/FilePane";
 import TagPane from "@/src/feature/think/components/TagPane";
 import { Header } from "@/src/shared/components/layout/Header";
 import { FileBar, HelpBar } from "@/src/shared/components/layout/MainContent";

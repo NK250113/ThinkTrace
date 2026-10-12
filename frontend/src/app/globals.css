@@ -74,9 +74,6 @@ body {
 }
 
 :is(.tiptap, .viewer) {
-  ul {
-    @apply pl-6;
-  }
   li {
     @apply relative list-none;
   }
