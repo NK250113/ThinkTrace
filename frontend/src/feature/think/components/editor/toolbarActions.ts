@@ -3,7 +3,7 @@ import type { MarkType, Node as PMNode } from '@tiptap/pm/model'
 import { TextSelection } from '@tiptap/pm/state'
 import { FORMATS, type FormatType } from './inlineMarkdown'
 import { collapseRow, expandRow } from './inlineSync'
-import type { MarkerId } from './markerCatalog'
+import type { MarkerId } from '@/src/shared/utils/markerCatalog'
 import { forEachItem, type ItemInfo } from './outlineUtils'
 
 // 折りたたまれて見えない行か(祖先のどれかが、この人の画面で折りたたまれている)
@@ -75,6 +75,7 @@ export function toggleFormatForSelection(editor: Editor, type: FormatType): bool
 
   const markType = schema.marks[FORMATS[type].mark]
   const rows = selectedRows(editor)
+  console.log('toggleFormatForSelection', type, FORMATS[type].mark, schema.marks.bold, markType, rows.length)
   if (!markType || rows.length === 0) return false
 
   const tr = state.tr

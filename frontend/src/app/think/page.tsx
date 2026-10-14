@@ -5,13 +5,15 @@ import MainPane from "@/src/feature/think/components/MainPane";
 import FilePane from "@/src/feature/think/components/FilePane";
 import TagPane from "@/src/feature/think/components/TagPane";
 import { Header } from "@/src/shared/components/layout/Header";
-import { FileBar, HelpBar } from "@/src/shared/components/layout/MainContent";
+import { FileBar, HelpBar } from "@/src/shared/components/layout/BodyContent";
+import { MarkerPane } from "@/src/feature/think/components/HelpBarContent";
 import { ResizerY } from "@/src/shared/components/ui/Resizer";
+import EditorProvider from "@/src/feature/think/components/editor/EditorProvider";
 
 export default function ThinkPage() {
     const firstRef = useRef(null);
     return (
-        <>
+        <EditorProvider>
             <Header></Header>
             <div className="flex flex-1 w-full">
                 <FileBar>
@@ -21,11 +23,11 @@ export default function ThinkPage() {
                 </FileBar>
                 <MainPane></MainPane>
                 <HelpBar contents={[
-                    {title: "test1", content: <></>},
-                    {title: "test2", content: <></>},
+                    {title: "エディター", content: <MarkerPane/>},
+                    {title: "ノート", content: <></>},
                 ]}>
                 </HelpBar>
             </div>
-        </>
+        </EditorProvider>
     );
 }

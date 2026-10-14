@@ -1,7 +1,7 @@
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { IconChevronRight, IconPointFilled, type Icon, type IconProps } from '@tabler/icons-react'
-import { ICON_REGISTRY } from './markerCatalog'
+import { ICON_REGISTRY } from '@/src/shared/utils/markerCatalog'
 
 // TablerのReactアイコンをSVG文字列にして使い回す
 const cache = new Map<string, string>()

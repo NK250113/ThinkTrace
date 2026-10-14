@@ -1,7 +1,7 @@
 import { Extension } from '@tiptap/core'
 import { Plugin, PluginKey } from '@tiptap/pm/state'
 import { Decoration, DecorationSet, type EditorView } from '@tiptap/pm/view'
-import { DEFAULT_ICON_NAME, DEFAULT_SETTINGS, type MarkerId, type MarkerSettings } from './markerCatalog'
+import { DEFAULT_ICON_NAME, DEFAULT_SETTINGS, type MarkerId, type MarkerSettings } from '@/src/shared/utils/markerCatalog'
 import { markerSvg, chevronSvg } from './icons'
 import { forEachItem } from './outlineUtils'
 import { inlineDecorations } from './inlineDecorations'

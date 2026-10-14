@@ -1,7 +1,7 @@
 import {
   ICON_REGISTRY, DEFAULT_SETTINGS, MARKER_IDS, MARKER_LABELS,
   type MarkerId, type MarkerSetting, type MarkerSettings,
-} from './markerCatalog'
+} from '@/src/shared/utils/markerCatalog'
 
 export const hasIcon = (name: string): boolean =>
   Object.prototype.hasOwnProperty.call(ICON_REGISTRY, name)

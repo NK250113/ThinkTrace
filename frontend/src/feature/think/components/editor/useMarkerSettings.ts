@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import type { MarkerSettings } from './markerCatalog'
+import type { MarkerSettings } from '@/src/shared/utils/markerCatalog'
 import { parseSettings } from './markerSettings'
 
 // 今はlocalStorageに保存している。サーバーに保存するなら、load/saveをAPI呼び出しに置き換える

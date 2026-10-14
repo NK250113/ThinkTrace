@@ -3,7 +3,7 @@ import ListItem, { type ListItemOptions } from '@tiptap/extension-list-item'
 import { InputRule } from '@tiptap/core'
 import type { Node as PMNode, ResolvedPos } from '@tiptap/pm/model'
 import { TextSelection } from '@tiptap/pm/state'
-import { DEFAULT_SETTINGS, type MarkerSettings } from './markerCatalog'
+import { DEFAULT_SETTINGS, type MarkerSettings } from '@/src/shared/utils/markerCatalog'
 import { findMarkerIdByPrefix } from './markerSettings'
 
 export const OutlineDocument = Document.extend({

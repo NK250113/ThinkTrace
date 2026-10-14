@@ -2,7 +2,7 @@ import { useState } from 'react'
 import {
   MARKER_IDS, MARKER_LABELS, ICON_REGISTRY, DEFAULT_SETTINGS,
   type MarkerId, type MarkerSetting, type MarkerSettings,
-} from './markerCatalog'
+} from '@/src/shared/utils/markerCatalog'
 import { findProblems } from './markerSettings'
 
 interface Props {
