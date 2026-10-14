@@ -1,14 +1,15 @@
-import { useEffect, useMemo, useRef, type ReactNode } from 'react'
-import { useEditor } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
-import Collaboration from '@tiptap/extension-collaboration'
-import { OutlineContext } from './EditorContext'
-import { OutlineDocument, OutlineItem } from './extensions'
-import { OutlineDecorations, REFRESH_META } from './outlineDecorations'
-import { UniqueRowId } from './uniqueRowId'
-import { OutlineInline, OutlineBold, OutlineItalic, OutlineStrike } from './inlineSync'
-import { useMarkerSettings } from './useMarkerSettings'
-import { ydoc, DOC_ID } from './collab'
+import { useEffect, useMemo, useRef, type ReactNode } from 'react';
+import { useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Collaboration from '@tiptap/extension-collaboration';
+import { OutlineContext } from './EditorContext';
+import { OutlineDocument, OutlineItem } from './extensions';
+import { OutlineDecorations, REFRESH_META } from './outlineDecorations';
+import { UniqueRowId } from './uniqueRowId';
+import { OutlineInline, OutlineBold, OutlineItalic, OutlineStrike } from './inlineSync';
+import { useMarkerSettings } from './useMarkerSettings';
+import { ydoc, DOC_ID } from './collab';
+import { formatShortcuts, markerShortcuts } from './keyboardShortcut';
 
 // デモ用の初期データ(Y.Docが空のときだけ入れる)。サーバーにつなぐときは不要
 const DEMO_CONTENT = `
@@ -56,14 +57,11 @@ export default function EditorProvider({ children }: { children: ReactNode }) {
       OutlineBold,
       OutlineItalic,
       OutlineStrike,
+      formatShortcuts,
+      markerShortcuts,
     ],
     immediatelyRender: false,
   })
-  useEffect(() => {
-    if (!editor) return
-    console.log('拡張:', editor.extensionManager.extensions.map((e) => e.name))
-    console.log('マーク:', Object.keys(editor.schema.marks))
-  }, [editor])
   // 初期データの投入(デモ用)
   useEffect(() => {
     if (editor && ydoc.getXmlFragment('default').length === 0) {
