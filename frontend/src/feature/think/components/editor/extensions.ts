@@ -5,6 +5,7 @@ import type { Node as PMNode, ResolvedPos } from '@tiptap/pm/model'
 import { TextSelection } from '@tiptap/pm/state'
 import { DEFAULT_SETTINGS, type MarkerSettings } from '@/src/shared/utils/markerCatalog'
 import { findMarkerIdByPrefix } from './markerSettings'
+import enterBehavior from './enterBehaviors';
 
 export const OutlineDocument = Document.extend({
   content: 'bulletList',
@@ -93,22 +94,14 @@ export const OutlineItem = ListItem.extend<OutlineItemOptions>({
       ...this.parent?.(), // Tab / Shift-Tab は標準のまま
 
       Enter: ({ editor }) => {
+        return enterBehavior({editor, name: this.name})
+      },
+
+      "Shift-Enter": ({ editor }) => {
         const { $from, empty } = editor.state.selection
         const ctx = empty ? getItemContext($from, this.name) : null
-
-        if (ctx && $from.parent.content.size === 0) {
-          // 入れ子の空行 → 字下げを戻す
-          if (ctx.nested) return editor.commands.liftListItem(this.name)
-          // 最上位の空行 → 下に新しい行を作る
-          const pos = $from.after(-1)
-          return editor
-            .chain()
-            .insertContentAt(pos, { type: this.name, content: [{ type: 'paragraph' }] })
-            .setTextSelection(pos + 2)
-            .run()
-        }
-        // 文字がある行は標準の分割
-        return editor.commands.splitListItem(this.name)
+        if (!ctx) return false // ListItem 内でなければ通常の処理に任せる
+        return this.editor.commands.splitListItem(this.name)
       },
 
       Backspace: ({ editor }) => {

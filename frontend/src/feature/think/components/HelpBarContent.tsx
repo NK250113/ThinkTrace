@@ -9,12 +9,6 @@ import { useOutline } from "./editor/EditorContext";
 import type { FormatType } from "./editor/inlineMarkdown";
 import { canFormatSelection, setMarkerForSelection, toggleFormatForSelection } from "./editor/toolbarActions";
 
-const FORMAT_BUTTONS: { type: FormatType; Label: Icon; className: string }[] = [
-  { type: "bold", Label: IconBold, className: "font-bold" },
-  { type: "italic", Label: IconItalic, className: "italic" },
-  { type: "strike", Label: IconStrikethrough, className: "line-through" },
-]
-
 export function MarkerPane() {
   const { editor, settings } = useOutline()
 
@@ -53,6 +47,7 @@ export function MarkerPane() {
           return {icon: Icon, id: marker.id, onclick: () => editor && setMarkerForSelection(editor, marker.id), prefix: marker.prefix, explain: marker.explain}
         })
       }/>
+      <button type="button" key="test" onClick={()=>editor && console.log(editor.getJSON())}>JSONを見る</button>
     </div>
   )
 }
