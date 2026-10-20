@@ -15,7 +15,7 @@ export default function ThinkPage() {
     return (
         <EditorProvider>
             <Header></Header>
-            <div className="flex flex-1 w-full">
+            <div className="flex flex-1 min-h-0 w-full">
                 <FileBar>
                     <TagPane ref={firstRef}></TagPane>
                     <ResizerY targetRef={firstRef} minHeight={100} maxHeight={500}/>

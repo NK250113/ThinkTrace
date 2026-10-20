@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, type ReactNode } from 'react';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Collaboration from '@tiptap/extension-collaboration';
+import { Placeholder } from '@tiptap/extensions';
 import { OutlineContext } from './EditorContext';
 import { OutlineDocument, OutlineItem } from './extensions';
 import { OutlineDecorations, REFRESH_META } from './outlineDecorations';
@@ -59,6 +60,9 @@ export default function EditorProvider({ children }: { children: ReactNode }) {
       OutlineStrike,
       formatShortcuts,
       markerShortcuts,
+      Placeholder.configure({
+        placeholder: 'ここに入力してください',
+      }),
     ],
     immediatelyRender: false,
   })

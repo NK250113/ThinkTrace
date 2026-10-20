@@ -47,7 +47,6 @@ export function MarkerPane() {
           return {icon: Icon, id: marker.id, onclick: () => editor && setMarkerForSelection(editor, marker.id), prefix: marker.prefix, explain: marker.explain}
         })
       }/>
-      <button type="button" key="test" onClick={()=>editor && console.log(editor.getJSON())}>JSONを見る</button>
     </div>
   )
 }

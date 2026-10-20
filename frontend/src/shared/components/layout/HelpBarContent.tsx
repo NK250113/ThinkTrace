@@ -18,17 +18,14 @@ export function MarkerPaneTable({contents}: markerPaneTableProps) {
     <table className="w-full"><tbody>
       {contents.map((content, i) => {
         return (
-          <tr key={content.id} className={`${i==0 ? "border-t" : ""} border-b border-foreground`}>
-            <td>{content.onclick ? (
-              <button key={content.id} type="button" onClick={content.onclick} onMouseDown={(e) => e.preventDefault()} className="block">
-                <content.icon className="h-full size-4.5 m-1"/>
-              </button>
-            ) : (
+          <tr key={content.id} onClick={content.onclick} onMouseDown={(e) => e.preventDefault()} className={`${i==0 ? "border-t" : ""} border-b border-foreground cursor-pointer`}>
+            <td>
               <content.icon className="h-full size-4.5 m-1"/>
-            )}</td>
+            </td>
             <td className="text-center pr-1">:</td>
             {content.prefix !== undefined && <td><p className="text-center">{content.prefix}</p></td>}
-            <td className="w-full"><p className="text-center">{content.explain}</p></td>
+            <td><div className="w-px h-4 mx-1 bg-foreground opacity-50"/></td>
+            <td className="w-full"><p>{content.explain}</p></td>
           </tr>
         );
       })}
