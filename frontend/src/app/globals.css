@@ -43,6 +43,7 @@
   --font-color: #000000;
   --accent-color: #44ffcc;
   --text-color-for-accent: #ffffff;
+  --line-color: #888888;
 }
 
 @theme inline {
@@ -53,6 +54,7 @@
   --color-subcontent: var(--subcontent-bg);
   --color-font: var(--font-color);
   --color-accent-text: var(--text-color-for-accent);
+  --color-line: var(--line-color);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -64,6 +66,7 @@
     --subcontent-bg: #1c1c1c;
     --foreground: #606060;
     --font-color: #ededed;
+    --line-color: #444444;
   }
 }
 

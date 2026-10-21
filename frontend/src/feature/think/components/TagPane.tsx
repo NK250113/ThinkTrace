@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { TagContent } from "@/src/shared/components/common/TextContent";
 import { useTag } from "../hooks";
+import { IconSearch } from "@tabler/icons-react";
 
 export default function TagPane({ref}: {ref?: React.Ref<HTMLDivElement>;}) {
     const { tags, selectTag, deselectTag, searchTags } = useTag();
@@ -51,26 +52,20 @@ function SearchTagText({onclick}: {onclick: (query: string)=>void}) {
 
     return (
         <>
-            <div ref={searchRef} className={`sticky flex justify-between flex-1 ms-2 rounded-sm bg-subcontent border-accent border-2
-            has-[input:focus]:border-accent transition-[height] duration-200 ease-in ${isCompact ? "h-14" : "h-10"}`}>
+            <div ref={searchRef} className={`sticky flex justify-between mx-2 rounded-sm bg-subcontent border-line border-2
+            has-[input:focus]:border-accent transition-[height] duration-300 ease-in h-7`}>
                 <input
                     type="text" autoCapitalize="off"
-                    className = "flex-1 focus-visible:outline-none"
+                    className="flex-1 focus-visible:outline-none"
                     onChange={(e) => setText(e.target.value)}
                 />
-                <button onClick={()=>onclick(text)} className="hover:brightness-98"><img/>🔍️</button>
-                <button type="button" onClick={sortTagsByCount} className={`${isCompact ? "hidden" : ""}
-                ${sortCriteria=="count" ? "" : "hidden"}`}>(回数順)</button>
-                <button type="button" onClick={sortTagsByName} className={`${isCompact ? "hidden" : ""}
-                ${sortCriteria=="name" ? "" : "hidden"}`}>(名前順)</button>
+                <button onClick={()=>onclick(text)} className="px-1 hover:brightness-98"><IconSearch className="size-4"/></button>
             </div>
-            <div className="flex gap-2">
+            <div className="flex items-center">
                 <p>並び替え：</p>
                 <div className="flex gap-1 p-0.5 bg-subcontent">
-                    <button type="button" onClick={sortTagsByCount} className=
-                    {sortCriteria=="count" ? "border-b-2 border-accent" : "opacity-98 hover:opacity-95"}>使用回数</button>
-                    <button type="button" onClick={sortTagsByName} className=
-                    {sortCriteria=="name" ? "border-b-2 border-accent" : "opacity-98 hover:opacity-95"}>名前順</button>
+                    <button type="button" onClick={sortTagsByName} className={sortCriteria=="count" ? "" : "hidden"}>(名前順)</button>
+                    <button type="button" onClick={sortTagsByCount} className={sortCriteria=="name" ? "" : "hidden"}>(使用回数順)</button>
                 </div>
             </div>
         </>

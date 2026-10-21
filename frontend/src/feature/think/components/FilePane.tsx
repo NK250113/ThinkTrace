@@ -1,18 +1,26 @@
 
 import { FileTableContent } from "@/src/shared/components/common/TextContent";
 import { SubmitButton } from "@/src/shared/components/ui/Button";
+import { IconSearch, IconPlus } from "@tabler/icons-react";
 import { useFile } from "../hooks";
 
 export default function FileListPane({ref}: {ref?: React.Ref<HTMLDivElement>;}) {
     const { files, sortCriteria, searchFiles, selectFile, sortFilesByName, sortFilesByCreatedAt, sortFilesByUpdatedAt } = useFile();
     return (
         <div ref={ref}>
-            <div className="flex gap-0.5">
-                <SubmitButton content="探す" size="free" disabled={true}/>
-                <p>並び替え：</p>
-                <button type="button" onClick={sortFilesByCreatedAt} className={sortCriteria=="updated_at" ? "" : "hidden"}>(作成日順)</button>
-                <button type="button" onClick={sortFilesByName} className={sortCriteria=="created_at" ? "" : "hidden"}>(更新日順)</button>
-                <button type="button" onClick={sortFilesByUpdatedAt} className={sortCriteria=="name" ? "" : "hidden"}>(名前順)</button>
+            <div className="flex justify-between items-center m-1">
+                <div className="flex items-center gap-1">
+                    <button type="submit" className="p-1 border-2 rounded-full border-background hover:border-line">
+                        <IconSearch className="size-4"/>
+                    </button>
+                    <p>並び替え：</p>
+                    <button type="button" onClick={sortFilesByCreatedAt} className={sortCriteria=="updated_at" ? "" : "hidden"}>(作成日順)</button>
+                    <button type="button" onClick={sortFilesByName} className={sortCriteria=="created_at" ? "" : "hidden"}>(更新日順)</button>
+                    <button type="button" onClick={sortFilesByUpdatedAt} className={sortCriteria=="name" ? "" : "hidden"}>(名前順)</button>
+                </div>
+                <button type="submit" className="h-full p-0.5 border-2 rounded-full border-line hover:border-foreground">
+                    <IconPlus className="size-4"/>
+                </button>
             </div>
             <table className="divide-y divide-foreground">
                 {files.map((item)=><FileTableContent icon=<></> title={item.name} onclick={()=>selectFile(item.id)}/>)}
