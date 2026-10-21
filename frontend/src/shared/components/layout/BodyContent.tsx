@@ -3,7 +3,7 @@ import { useState } from "react";
 
 export function FileBar({children}: {children: React.ReactNode}) {
   return (
-    <div className="w-1/5 bg-content border-r-2 border-foreground">
+    <div className="w-2/9 bg-content border-r-2 border-foreground">
       {children}
     </div>
   );

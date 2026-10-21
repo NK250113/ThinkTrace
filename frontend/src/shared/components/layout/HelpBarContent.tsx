@@ -24,7 +24,7 @@ export function MarkerPaneTable({contents}: markerPaneTableProps) {
             </td>
             <td className="text-center pr-1">:</td>
             {content.prefix !== undefined && <td><p className="text-center">{content.prefix}</p></td>}
-            <td><div className="w-px h-4 mx-1 bg-foreground opacity-50"/></td>
+            <td><div className="w-[0.5px] h-4 mx-1 bg-line"/></td>
             <td className="w-full"><p>{content.explain}</p></td>
           </tr>
         );
