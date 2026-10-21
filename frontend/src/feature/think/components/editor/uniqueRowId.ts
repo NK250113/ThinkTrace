@@ -1,9 +1,8 @@
 import { Extension } from '@tiptap/core'
 import { Plugin, PluginKey } from '@tiptap/pm/state'
+import { hasUserEdit, Y_SYNC } from './outlineUtils';
 
 const INIT = 'outline:ensure-ids'
-// y-prosemirrorが、Yjs(他の人の変更・Undo・初期同期)由来のトランザクションに付ける印
-const Y_SYNC = 'y-sync$'
 
 const newId = (): string =>
   globalThis.crypto?.randomUUID?.() ??
@@ -44,7 +43,9 @@ export const UniqueRowId = Extension.create({
 
           const tr = newState.tr
           for (const { pos, attrs } of fixes) tr.setNodeMarkup(pos, undefined, attrs)
-          return tr.setMeta('addToHistory', false)
+          // ユーザーの編集に伴う変更なら、その編集と同じ履歴の1ステップにする。
+          // それ以外(読み込み直後など)なら、履歴に残さない
+          return hasUserEdit(transactions) ? tr : tr.setMeta('addToHistory', false)
         },
       }),
     ]

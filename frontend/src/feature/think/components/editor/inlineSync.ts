@@ -5,7 +5,7 @@ import Strike from '@tiptap/extension-strike'
 import type { Node as PMNode, Schema } from '@tiptap/pm/model'
 import { Plugin, PluginKey, TextSelection, type Transaction } from '@tiptap/pm/state'
 import { FORMATS, FORMAT_TYPES, parseInline } from './inlineMarkdown'
-import { forEachItem, type ItemInfo } from './outlineUtils'
+import { forEachItem, hasUserEdit, Y_SYNC, type ItemInfo } from './outlineUtils'
 
 // 標準の太字・斜体・打ち消し線は、記号を打った瞬間に変換してしまうので、
 // 入力ルール・貼り付けルール・ショートカットを外す(変換は、行を離れたときに自前で行う)
@@ -44,7 +44,6 @@ export const OutlineStrike = Strike.extend({
 })
 
 const INIT = 'outline:inline-init'
-const Y_SYNC = 'y-sync$' // Yjs(他の人の変更・Undo・初期同期)由来のトランザクションの印
 
 // この人が展開している行のID。「展開すべき行」との差分から、展開・畳み込みを決める
 const expandedKey = new PluginKey<Set<string>>('outlineInline')
@@ -237,7 +236,7 @@ export const OutlineInline = Extension.create({
             else collapseRow(tr, newState.schema, para, item.start)
           }
           tr.setMeta(expandedKey, shouldBe)
-          return tr.setMeta('addToHistory', false)
+          return hasUserEdit(transactions) ? tr : tr.setMeta('addToHistory', false)
         },
       }),
     ]

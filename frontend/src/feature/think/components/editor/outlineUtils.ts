@@ -1,5 +1,8 @@
 import type { Node as PMNode } from '@tiptap/pm/model'
-import type { Selection } from '@tiptap/pm/state'
+import type { Selection, Transaction } from '@tiptap/pm/state'
+
+// y-prosemirrorが、Yjs(他の人の変更・Undo・初期同期)由来のトランザクションに付ける印
+export const Y_SYNC = 'y-sync$'
 
 export interface ItemInfo {
   node: PMNode // listItem
@@ -21,4 +24,10 @@ export function forEachItem(
     const end = pos + para.nodeSize
     fn({ node, pos, start, end, active: selection.from <= end && selection.to >= start })
   })
+}
+
+export function hasUserEdit(transactions: readonly Transaction[]): boolean {
+  return transactions.some(
+    (tr) => tr.docChanged && tr.getMeta('addToHistory') !== false && !tr.getMeta(Y_SYNC)
+  )
 }
