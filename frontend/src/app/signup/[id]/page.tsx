@@ -7,7 +7,7 @@ export default function UsersPage(params:{
 }) {
     return (
         <div className="w-2/3 gap-10 flex flex-col justify-center items-center bg-content rounded-2xl py-10 px-10">
-            <AppLogo h="4xl"></AppLogo>
+            <AppLogo className="h-4xl"></AppLogo>
             <SignupForm></SignupForm>
         </div>
     );
