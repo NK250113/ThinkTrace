@@ -8,17 +8,17 @@ import { IconSearch } from "@tabler/icons-react";
 export default function TagPane({ref}: {ref?: React.Ref<HTMLDivElement>;}) {
     const { tags, selectTag, deselectTag, searchTags } = useTag();
     return (
-        <div ref={ref}>
+        <div ref={ref} className="overflow-auto">
             <p> タグを検索</p>
             <SearchTagText onclick={searchTags}/>
-            <hr/>
-            <p>選択中のタグ</p>
+            <hr className="my-0.5 mx-2"/>
+            <p className="sticky top-0 bg-content">選択中のタグ</p>
             <div className="flex justify-start gap-2 flex-wrap">
                 {tags.map((item) => <TagContent text={item.name} onClick={() => deselectTag(item.id)}
                 className={item.disabled || !item.selected ? "hidden" : ""}/>)}
             </div>
-            <hr/>
-            <p>その他のタグ</p>
+            <hr className="my-0.5 mx-2"/>
+            <p className="sticky top-0 bg-content">その他のタグ</p>
             <div className="flex justify-start gap-2 flex-wrap">
                 {tags.map((item) => <TagContent text={item.name} onClick={() => selectTag(item.id)}
                 className={item.disabled || item.selected ? "hidden" : ""}/>)}
