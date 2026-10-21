@@ -1,6 +1,6 @@
 import {
   IconPoint,
-  IconBulb, IconHelpSquareRounded, IconFlag, IconTarget, IconTool, IconSparkle2,
+  IconBulb, IconHelpSquareRounded, IconFlag, IconTargetArrow, IconTool, IconSparkle2,
   IconPointFilled, IconCloud, IconSettings, IconAnchor, IconClock, IconFilter,
   IconCirclesRelation, IconScale, IconSword, IconBook, IconQuote,
   type Icon,
@@ -11,7 +11,7 @@ export const MARKER_DEFS = [
   { id: 'Hypothesis', label: '仮説', prefix: 'h', icon: 'IconBulb', explain: '提唱する仮説、議題' },
   { id: 'question', label: '疑問', prefix: '?', icon: 'IconHelpSquareRounded', explain: '検証していく疑問' },
   { id: 'Summary', label: 'まとめ', prefix: 's', icon: 'IconFlag', explain: '仮説や疑問の結論' },
-  { id: 'Goal', label: '目的', prefix: 'g', icon: 'IconTarget', explain: '達成したい目標' },
+  { id: 'Goal', label: '目的', prefix: 'g', icon: 'IconTargetArrow', explain: '達成したい目標' },
   { id: 'Method', label: '手法', prefix: 'm', icon: 'IconTool', explain: '目標達成の方法' },
   { id: 'important', label: '重要', prefix: '!', icon: 'IconSparkle2', explain: '重要な情報' },
   { id: 'list', label: '列挙', prefix: '-', icon: 'IconPointFilled', explain: '自由に使える項目の列挙' },
@@ -47,7 +47,7 @@ export const DEFAULT_SETTINGS = Object.fromEntries(
 // ② 設定画面で選べるアイコン。増やすときはimportして、ここに足す
 export const ICON_REGISTRY: Record<string, Icon> = {
   IconPoint,
-  IconBulb, IconHelpSquareRounded, IconFlag, IconTarget, IconTool, IconSparkle2,
+  IconBulb, IconHelpSquareRounded, IconFlag, IconTargetArrow, IconTool, IconSparkle2,
   IconPointFilled, IconCloud, IconSettings, IconAnchor, IconClock, IconFilter,
   IconCirclesRelation, IconScale, IconSword, IconBook, IconQuote,
 }
