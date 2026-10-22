@@ -11,6 +11,7 @@ import { OutlineShortcuts } from './outlineShortcuts';
 import { useMarkerSettings } from './useMarkerSettings';
 import { ydoc, DOC_ID } from './collab';
 import { formatShortcuts, markerShortcuts } from './keyboardShortcut';
+import { OutlineClipboard } from './outlineClipboard';
 
 // デモ用の初期データ(Y.Docが空のときだけ入れる)。サーバーにつなぐときは不要
 const DEMO_CONTENT = `
@@ -57,6 +58,7 @@ export default function EditorProvider({ children }: { children: ReactNode }) {
       OutlineShortcuts,
       formatShortcuts,
       markerShortcuts,
+      OutlineClipboard.configure({ getSettings: () => settingsRef.current }),
       Placeholder.configure({
         placeholder: 'ここに入力してください',
       }),
