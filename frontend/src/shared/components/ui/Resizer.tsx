@@ -52,14 +52,8 @@ export function ResizerY({
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerCancel={() => setIsDragging(false)}
-      style={{
-        height: "8px",
-        cursor: "ns-resize",
-        touchAction: "none",
-        userSelect: "none",
-        backgroundColor: isDragging ? "#999" : "#ccc",
-      }}
-    />
+      className="h-1 cursor-ns-resize touch-none select-none bg-line"
+    >{isDragging ? <div className="h-full w-full bg-foreground opacity-50"/> : <></>}</div>
   );
 }
 
