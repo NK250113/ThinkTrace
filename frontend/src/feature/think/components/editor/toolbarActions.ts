@@ -1,8 +1,7 @@
 import type { Editor } from '@tiptap/core'
-import type { MarkType, Node as PMNode } from '@tiptap/pm/model'
 import { TextSelection } from '@tiptap/pm/state'
-import { FORMATS, type FormatType } from './inlineMarkdown'
-import { collapseRow, expandRow } from './inlineSync'
+import { fromCells, isFormatted, setFormat, toCells, type ParsedRow } from './inlineFormat'
+import type { FormatType } from './inlineMarkdown'
 import type { MarkerId } from '@/src/shared/utils/markerCatalog'
 import { forEachItem, type ItemInfo } from './outlineUtils'
 
@@ -31,19 +30,10 @@ function selectedRows(editor: Editor): ItemInfo[] {
 
   const touched = all.filter((item) => item.active)
   // 範囲選択では、文字が1つでも選ばれている行だけを対象にする
-  // (行末にちょうど触れているだけの前の行は含めない)
   const overlapped = empty ? touched : all.filter((item) => from < item.end && to > item.start)
   const rows = overlapped.length > 0 ? overlapped : touched
 
   return rows.filter((item) => !isHidden(editor, item.pos))
-}
-
-function isFullyMarked(doc: PMNode, from: number, to: number, markType: MarkType): boolean {
-  let all = true
-  doc.nodesBetween(from, to, (node) => {
-    if (node.isText && !markType.isInSet(node.marks)) all = false
-  })
-  return all
 }
 
 // ボタンの「押せる/押せない」の判定用: 書式は、範囲選択があるときだけ設定できる
@@ -65,70 +55,87 @@ export function setMarkerForSelection(editor: Editor, markerId: MarkerId | null)
   return true
 }
 
+interface RowPlan {
+  row: ItemInfo
+  text: string // 段落の文字列(記号を含む)
+  parsed: ParsedRow
+  c0: number // 書式を付ける範囲(表示される文字の番号。[c0, c1))
+  c1: number
+}
+
 // 選択範囲の書式(太字・斜体・打ち消し線)を付ける/外す。
 // 選択した部分が全て書式付きなら外し、1文字でも書式がなければ全体に付ける。
-// 書式は行をまたげないので、行ごとに「その行の中の選択部分」だけに適用する
+// 書式は行をまたげないので、行ごとに「その行の中の選択部分」だけに適用する。
+// 文書では、記号の文字を挿入・削除するだけなので、1回の操作は、1回のUndoで戻る
 export function toggleFormatForSelection(editor: Editor, type: FormatType): boolean {
   const { state } = editor
   const { schema, selection } = state
   if (selection.empty) return false // 範囲選択がなければ、書式は設定できない
 
-  const markType = schema.marks[FORMATS[type].mark]
-  const rows = selectedRows(editor)
-  console.log('toggleFormatForSelection', type, FORMATS[type].mark, schema.marks.bold, markType, rows.length)
-  if (!markType || rows.length === 0) return false
-
-  const tr = state.tr
-
-  // ① 選択行を、記号の文字を解釈して、マークの状態に戻す(後ろの行から処理して、前の行の位置をずらさない)
-  for (const row of [...rows].reverse()) {
-    collapseRow(tr, schema, row.node.firstChild!, row.start)
-  }
-  const from = tr.mapping.map(selection.from)
-  const to = tr.mapping.map(selection.to)
-
-  // ② 行ごとに、書式を付ける範囲を決める
-  const liPositions: number[] = []
-  const targets: { from: number; to: number }[] = []
-  for (const row of rows) {
-    const liPos = tr.mapping.map(row.pos)
-    const para = tr.doc.nodeAt(liPos)?.firstChild
-    if (!para) continue
-    liPositions.push(liPos)
+  // ① 行ごとに、書式を付ける範囲を決める
+  const plans: RowPlan[] = []
+  for (const row of selectedRows(editor)) {
+    const text = row.node.firstChild!.textContent
+    const parsed = toCells(text)
 
     // 先頭の行は選択の開始位置から行末まで、最後の行は行頭から選択の終了位置まで、間の行は行全体になる
-    const a = Math.max(from, liPos + 2)
-    const b = Math.min(to, liPos + para.nodeSize)
-    if (a >= b) continue
+    const i = Math.max(selection.from, row.start) - row.start
+    const j = Math.min(selection.to, row.end) - row.start
+    if (i >= j) continue
 
-    // 端の空白は書式の外に出す(「** foo **」は太字として読み取れないため)
-    const text = tr.doc.textBetween(a, b)
-    const ta = a + (text.length - text.trimStart().length)
-    const tb = b - (text.length - text.trimEnd().length)
-    if (ta < tb) targets.push({ from: ta, to: tb })
+    // 文字列の位置 → 表示される文字の番号(記号の途中が選ばれていても、中身の範囲に直る)
+    let c0 = parsed.cellBefore[i]!
+    let c1 = parsed.cellBefore[j]!
+    // 端の空白は、書式に含めない
+    while (c0 < c1 && /\s/.test(parsed.cells[c0]!.ch)) c0++
+    while (c1 > c0 && /\s/.test(parsed.cells[c1 - 1]!.ch)) c1--
+    if (c0 < c1) plans.push({ row, text, parsed, c0, c1 })
   }
-  if (targets.length === 0) return false // 空の行や空白だけの行しかない
+  if (plans.length === 0) return false // 空の行や空白だけの行しかない
 
-  // ③ 書式を付ける/外す
-  const allMarked = targets.every((t) => isFullyMarked(tr.doc, t.from, t.to, markType))
-  for (const t of targets) {
-    if (allMarked) tr.removeMark(t.from, t.to, markType)
-    else tr.addMark(t.from, t.to, markType.create())
-  }
+  // ② 付けるか外すかを、選択全体で1つ決める
+  const allFormatted = plans.every((p) => isFormatted(p.parsed.cells, p.c0, p.c1, type))
 
-  // ④ 選択行を、記号が見える状態に戻す
-  const expandFrom = tr.steps.length
-  for (const liPos of [...liPositions].reverse()) {
-    const para = tr.doc.nodeAt(liPos)?.firstChild
-    if (para) expandRow(tr, schema, para, liPos + 2)
-  }
+  // ③ 行ごとに、記号の部分だけを書き換える(上の行から順に。上の行の長さの変化は shift に溜める)
+  const tr = state.tr
+  let shift = 0
+  let selFrom = selection.from
+  let selTo = selection.to
 
-  // ⑤ 選択範囲を、書式を付けた文字のまま(記号は含めない)にする
-  const m = tr.mapping.slice(expandFrom)
-  const first = targets[0]!
-  const last = targets[targets.length - 1]!
-  tr.setSelection(TextSelection.create(tr.doc, m.map(first.from, 1), m.map(last.to, -1)))
+  plans.forEach(({ row, text, parsed, c0, c1 }, index) => {
+    setFormat(parsed.cells, c0, c1, type, !allFormatted)
+    const out = fromCells(parsed.cells)
+    const base = row.start + shift // この行の段落の先頭(上の行の変更を反映した位置)
+    const n = parsed.cells.length
 
+    // 文字と文字の間(記号が入る場所)を、1か所ずつ比べて、違うところだけ書き換える
+    const edits: { from: number; to: number; insert: string }[] = []
+    for (let k = 0; k <= n; k++) {
+      const oldFrom = k === 0 ? 0 : parsed.positions[k - 1]! + 1
+      const oldTo = k === n ? text.length : parsed.positions[k]!
+      const newFrom = k === 0 ? 0 : out.ends[k - 1]!
+      const newTo = k === n ? out.text.length : out.starts[k]!
+      const insert = out.text.slice(newFrom, newTo)
+      if (text.slice(oldFrom, oldTo) !== insert) {
+        edits.push({ from: base + oldFrom, to: base + oldTo, insert })
+      }
+    }
+    // 後ろの位置から先に書き換える(前の位置がずれないように)
+    for (const e of edits.reverse()) {
+      if (e.insert) tr.replaceWith(e.from, e.to, schema.text(e.insert))
+      else tr.delete(e.from, e.to)
+    }
+
+    // 選択範囲は、書式を付けた文字のまま(記号は含めない)にする
+    if (index === 0) selFrom = base + out.starts[c0]!
+    if (index === plans.length - 1) selTo = base + out.ends[c1 - 1]!
+
+    shift += out.text.length - text.length
+  })
+
+  if (!tr.docChanged) return false
+
+  tr.setSelection(TextSelection.create(tr.doc, selFrom, selTo))
   editor.view.dispatch(tr)
   editor.view.focus()
   return true

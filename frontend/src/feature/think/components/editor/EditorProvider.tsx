@@ -7,7 +7,7 @@ import { OutlineContext } from './EditorContext';
 import { OutlineDocument, OutlineItem } from './extensions';
 import { OutlineDecorations, REFRESH_META } from './outlineDecorations';
 import { UniqueRowId } from './uniqueRowId';
-import { OutlineInline, OutlineBold, OutlineItalic, OutlineStrike } from './inlineSync';
+import { OutlineShortcuts } from './outlineShortcuts';
 import { useMarkerSettings } from './useMarkerSettings';
 import { ydoc, DOC_ID } from './collab';
 import { formatShortcuts, markerShortcuts } from './keyboardShortcut';
@@ -54,10 +54,7 @@ export default function EditorProvider({ children }: { children: ReactNode }) {
       OutlineDecorations.configure({ getSettings: () => settingsRef.current, docId: DOC_ID }),
       UniqueRowId,
       Collaboration.configure({ document: ydoc }),
-      OutlineInline,
-      OutlineBold,
-      OutlineItalic,
-      OutlineStrike,
+      OutlineShortcuts,
       formatShortcuts,
       markerShortcuts,
       Placeholder.configure({
