@@ -3,14 +3,14 @@ import { useEffect, useState } from 'react';
 
 import { getNote, getTags, searchNotes } from './services';
 
+export type TagInfo = {
+  id: number;
+  name: string;
+  count: number;
+  selected: boolean;
+  disabled: boolean;
+};
 export function useTag() {
-  type TagInfo = {
-    id: number;
-    name: string;
-    count: number;
-    selected: boolean;
-    disabled: boolean;
-  };
   const [allTags, setAllTags] = useState<Array<TagInfo>>([]);
   const [sortCriteria, setSortCriteria] = useState<"name"|"count">("count");
 
@@ -94,18 +94,18 @@ export function useTag() {
   return { tags: allTags, selectTag, deselectTag, searchTags, sortTagsByName, sortTagsByCount, getSelectedTags, sortCriteria };
 }
 
+type FileInfo = {
+  id: number;
+  name: string;
+  created_at: Date;
+  updated_at: Date;
+};
 export function useFile() {
-  type FileInfo = {
-    id: number;
-    name: string;
-    created_at: Date;
-    updated_at: Date;
-  };
   const [files, setFiles] = useState<FileInfo[]>([]);
   const [sortCriteria, setSortCriteria] = useState<"name"|"created_at"|"updated_at">("updated_at"); // 更新日時、作成日時、名前
 
-  const searchFiles = async () => {
-    const raw_data = await searchNotes({ tags: useTag().getSelectedTags() });
+  const searchFiles = async (tags: number[]) => {
+    const raw_data = await searchNotes({ tags });
     const data = raw_data.map((item) => ({
       ...item,
       created_at: new Date(item.created_at),
@@ -124,6 +124,16 @@ export function useFile() {
         break;
     }
   }
+/*
+  const makeFile = async (name: string) => {
+    const data = await makeFile({ name });
+    setFiles((prevFiles) => [...prevFiles, {
+      ...data,
+      created_at: new Date(data.created_at),
+      updated_at: new Date(data.updated_at),
+    }]);
+  };
+*/
 
   const selectFile = async (note_id: number) => {
     const data = await getNote({ note_id });
@@ -149,6 +159,6 @@ export function useFile() {
     newArray.sort((a, b) => a.updated_at.getTime() - b.updated_at.getTime());
     setFiles(newArray);
   }
-
+  // あとコミット処理も必要
   return { files, sortCriteria, searchFiles, selectFile, sortFilesByName, sortFilesByCreatedAt, sortFilesByUpdatedAt };
 }

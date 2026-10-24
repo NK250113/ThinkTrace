@@ -1,16 +1,18 @@
 
 import { FileTableContent } from "@/src/shared/components/common/TextContent";
-import { SubmitButton } from "@/src/shared/components/ui/Button";
 import { IconSearch, IconPlus } from "@tabler/icons-react";
-import { useFile } from "../hooks";
+import { useFile, type TagInfo } from "../hooks";
 
-export default function FileListPane({ref}: {ref?: React.Ref<HTMLDivElement>;}) {
-  const { files, sortCriteria, searchFiles, selectFile, sortFilesByName, sortFilesByCreatedAt, sortFilesByUpdatedAt } = useFile();
+type FilePaneProps = {
+  ref?: React.Ref<HTMLDivElement>;
+  tags: Array<TagInfo>
+} & ReturnType<typeof useFile>
+export default function FileListPane({ref, tags, files, sortCriteria, searchFiles, selectFile, sortFilesByName, sortFilesByCreatedAt, sortFilesByUpdatedAt}: FilePaneProps) {
   return (
     <div ref={ref}>
       <div className="flex justify-between items-center m-1">
         <div className="flex items-center gap-1">
-          <button type="submit" className="p-1 border-2 rounded-full border-background hover:border-line">
+          <button type="submit" onClick={()=>searchFiles(tags.map(row => row.id))} className="p-1 border-2 rounded-full border-background hover:border-line">
             <IconSearch className="size-4"/>
           </button>
           <p>並び替え：</p>

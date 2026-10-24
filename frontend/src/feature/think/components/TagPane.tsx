@@ -5,8 +5,10 @@ import { TagContent } from "@/src/shared/components/common/TextContent";
 import { useTag } from "../hooks";
 import { IconSearch } from "@tabler/icons-react";
 
-export default function TagPane({ref}: {ref?: React.Ref<HTMLDivElement>;}) {
-  const { tags, selectTag, deselectTag, searchTags } = useTag();
+type TagPaneProps = {
+  ref?: React.Ref<HTMLDivElement>;
+} & ReturnType<typeof useTag>
+export default function TagPane( {ref, tags, selectTag, deselectTag, searchTags }: TagPaneProps ) {
   return (
     <div ref={ref} className="overflow-auto">
       <p> タグを検索</p>
