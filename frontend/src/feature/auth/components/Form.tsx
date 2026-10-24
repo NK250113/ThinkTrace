@@ -39,8 +39,7 @@ function AuthText(props: React.ComponentProps<"input">) {
   );
 }
 
-export function LoginForm() {
-  const { email, password, error, isFormValid, emailHandler, passwordHandler, submit } = useLogin();
+export function LoginForm({ email, password, error, isFormValid, emailHandler, passwordHandler, submit }: ReturnType<typeof useLogin>) {
   return (
     <AuthForm title="メールアドレスでログイン" submit={submit} error={error} buttonTxt="ログイン" isFormValid={isFormValid}>
       <AuthText type="email" value={email} onChange={emailHandler}
@@ -53,8 +52,7 @@ export function LoginForm() {
   );
 }
 
-export function SignupForm() {
-  const { email, password, username, error, isFormValid, emailHandler, passwordHandler, usernameHandler, submit } = useSignup();
+export function SignupForm({email, password, username, error, isFormValid, emailHandler, passwordHandler, usernameHandler, submit}: ReturnType<typeof useSignup>) {
   return (
     <AuthForm title="メールアドレスで新規登録" submit={submit} error={error} buttonTxt="新規登録" isFormValid={isFormValid}>
       <AuthText type="email" value={email} onChange={emailHandler}
@@ -70,8 +68,7 @@ export function SignupForm() {
   );
 }
 
-export function CheckEmailForm() {
-  const { email, error, isFormValid, emailHandler, submit } = useCheckEmail();
+export function CheckEmailForm({ email, error, isFormValid, emailHandler, submit }: ReturnType<typeof useCheckEmail>) {
   return (
     <>
     <AuthForm title="メールアドレスで新規登録" submit={submit} error={error} buttonTxt="確認用メールを送信" isFormValid={isFormValid}>
