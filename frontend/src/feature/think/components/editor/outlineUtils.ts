@@ -12,6 +12,14 @@ export interface ItemInfo {
   active: boolean // 選択範囲がこの行の段落に重なっているか
 }
 
+// 1つの listItem から、行の情報を作る
+export function toItemInfo(node: PMNode, pos: number, selection: Selection): ItemInfo {
+  const para = node.firstChild!
+  const start = pos + 2
+  const end = pos + para.nodeSize
+  return { node, pos, start, end, active: selection.from <= end && selection.to >= start }
+}
+
 export function forEachItem(
   doc: PMNode,
   selection: Selection,
@@ -19,10 +27,7 @@ export function forEachItem(
 ): void {
   doc.descendants((node, pos) => {
     if (node.type.name !== 'listItem') return
-    const para = node.firstChild!
-    const start = pos + 2
-    const end = pos + para.nodeSize
-    fn({ node, pos, start, end, active: selection.from <= end && selection.to >= start })
+    fn(toItemInfo(node, pos, selection))
   })
 }
 

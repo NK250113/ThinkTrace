@@ -78,6 +78,10 @@ export default function EditorProvider({ children }: { children: ReactNode }) {
     editor?.view.dispatch(editor.state.tr.setMeta(REFRESH_META, true))
   }, [settings, editor])
 
+  useEffect(() => { // 一時的
+    ;(window as unknown as { editor: unknown }).editor = editor
+  }, [editor])
+
   // 値を毎回作り直すと、使う側が無駄に再描画されるので、useMemoで固定する
   const value = useMemo(() => ({ editor, settings, setSettings }), [editor, settings, setSettings])
 
