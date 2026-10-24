@@ -3,7 +3,7 @@ import { useState } from "react";
 
 export function FileBar({children}: {children: React.ReactNode}) {
   return (
-    <div className="w-2/9 bg-content border-r-2 border-foreground">
+    <div className="w-2/9 bg-subcontent border-r-2 border-foreground">
       {children}
     </div>
   );
@@ -15,11 +15,11 @@ type helpBarProps = {
 export function HelpBar({contents}: helpBarProps) {
   const [activeTab, setActiveTab] = useState(0);
   return (
-    <div className="w-1/4 bg-content border-l-2 border-foreground">
+    <div className="w-1/4 bg-subcontent border-l-2 border-foreground">
       <div className="bg-foreground flex gap-px justify-start">
         {contents.map((item, idx) => (
           <button key={item.title} type="button" onClick={() => setActiveTab(idx)}
-          className={`px-1 bg-content rounded-t-xs border-foreground ${activeTab === idx ? "border-none" : "border-b-2"}`}>
+          className={`px-1 bg-subcontent rounded-t-xs border-foreground ${activeTab === idx ? "border-none" : "border-b-2"}`}>
           {item.title}</button>
         ))}
       </div>
