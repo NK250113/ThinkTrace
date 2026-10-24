@@ -123,26 +123,60 @@ export const OutlineItem = ListItem.extend<OutlineItemOptions>({
           editor.commands.liftListItem(this.name)
           return true
         }
-        // 最上位の先頭行、または子を持つ行 → 何もしない
-        if ($from.index(-2) === 0 || ctx.item.childCount > 1) return true
 
-        // それ以外 → 1つ前の行の末尾に結合(空行なら単に消える)
+        // ---- ここからは、最上位の行を消す(または前の行に結合する) ----
+        const item = ctx.item
+        const hasChildren = item.childCount > 1 // 段落のほかに、子リストがある
+        const text = $from.parent.content // この行の文字
+        const liPos = $from.before(-1) // この行(li)の位置
+        const tr = state.tr
+
+        // 先頭の行: 兄の行がない
+        if ($from.index(-2) === 0) {
+          // 文字がなく、子がある場合だけ、子を、この行の代わりに置く。それ以外は、何もしない
+          if (text.size === 0 && hasChildren) {
+            tr.replaceWith(liPos, liPos + item.nodeSize, item.child(1).content)
+            tr.setSelection(TextSelection.create(tr.doc, liPos + 2)) // 先頭に上がった子の行の頭
+            editor.view.dispatch(tr)
+          }
+          return true
+        }
+
+        // 兄の行(この行の1つ前の、同じ階層の行)
+        const elder = $from.node(-2).child($from.index(-2) - 1)
+        const elderPos = liPos - elder.nodeSize
+
+        // 文字を足す先: 見た目で1つ前の行の末尾
         let prevEnd = -1
         state.doc.nodesBetween(0, $from.before(), (node, pos) => {
           if (node.type.name === 'paragraph') prevEnd = pos + node.nodeSize - 1
         })
         if (prevEnd < 0) return true
 
-        const text = $from.parent.content
-        const itemPos = $from.before(-1)
-        const itemSize = ctx.item.nodeSize
+        // 後ろの位置から先に変更する(前の位置がずれないように)
+        // ① この行を消す
+        tr.delete(liPos, liPos + item.nodeSize)
 
-        return editor.commands.command(({ tr }) => {
-          tr.delete(itemPos, itemPos + itemSize)
-          tr.insert(prevEnd, text)
-          tr.setSelection(TextSelection.create(tr.doc, prevEnd))
-          return true
-        })
+        // ② 子の行を、兄の行の子の末尾に引き渡す
+        if (hasChildren) {
+          const children = item.child(1).content // 子リストの中身(子の行たち)
+          if (elder.childCount > 1) {
+            tr.insert(elderPos + elder.nodeSize - 2, children) // 兄の子リストの末尾(リストの閉じの手前)
+          } else {
+            // 兄の行に、子リストがまだなければ、新しく作る(兄の行の末尾に置く)
+            tr.insert(
+              elderPos + elder.nodeSize - 1,
+              state.schema.nodes.bulletList!.create(null, children)
+            )
+          }
+        }
+
+        // ③ 文字を、1つ前の行の末尾に足す
+        if (text.size > 0) tr.insert(prevEnd, text)
+
+        tr.setSelection(TextSelection.create(tr.doc, prevEnd)) // 結合した位置にカーソルを置く
+        editor.view.dispatch(tr)
+        return true
       },
     }
   },
