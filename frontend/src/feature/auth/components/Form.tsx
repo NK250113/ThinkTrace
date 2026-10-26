@@ -1,9 +1,10 @@
 "use client";
 
-import type { SubmitEventHandler } from "react";
+import type { ReactNode, SubmitEventHandler } from "react";
 
 import { ErrorMessage } from "@/src/shared/components/common/TextContent";
 import { SubmitButton } from "@/src/shared/components/ui/Button";
+import { InputText } from "@/src/shared/components/ui/Text";
 
 import { useCheckEmail, useLogin, useSignup } from "./../hooks";
 
@@ -29,23 +30,15 @@ function AuthForm({title, submit, error, buttonTxt, isFormValid, children}: Auth
   );
 }
 
-function AuthText(props: React.ComponentProps<"input">) {
-  return (
-    <input
-      {...props}
-      autoCapitalize="off" // 頭文字を大文字にしない
-      className = "w-full rounded-sm bg-subcontent border-2 shadow-accent focus-visible:outline-none focus-visible:border-accent focus-visible:shadow-[0_0_5px]"
-    />
-  );
-}
+
 
 export function LoginForm({ email, password, error, isFormValid, emailHandler, passwordHandler, submit }: ReturnType<typeof useLogin>) {
   return (
     <AuthForm title="メールアドレスでログイン" submit={submit} error={error} buttonTxt="ログイン" isFormValid={isFormValid}>
-      <AuthText type="email" value={email} onChange={emailHandler}
+      <InputText type="email" value={email} onChange={emailHandler}
       placeholder="メールアドレス"
       autoComplete="email"/>
-      <AuthText type="password" value={password} onChange={passwordHandler}
+      <InputText type="password" value={password} onChange={passwordHandler}
       placeholder="パスワード"
       autoComplete="password"/>
     </AuthForm>
@@ -55,13 +48,13 @@ export function LoginForm({ email, password, error, isFormValid, emailHandler, p
 export function SignupForm({email, password, username, error, isFormValid, emailHandler, passwordHandler, usernameHandler, submit}: ReturnType<typeof useSignup>) {
   return (
     <AuthForm title="メールアドレスで新規登録" submit={submit} error={error} buttonTxt="新規登録" isFormValid={isFormValid}>
-      <AuthText type="email" value={email} onChange={emailHandler}
+      <InputText type="email" value={email} onChange={emailHandler}
       placeholder="メールアドレス"
       autoComplete="email" disabled={true}/>
-      <AuthText type="text" value={username} onChange={usernameHandler}
+      <InputText type="text" value={username} onChange={usernameHandler}
       placeholder="ユーザ名"
       autoComplete="email"/>
-      <AuthText type="password" value={password} onChange={passwordHandler}
+      <InputText type="password" value={password} onChange={passwordHandler}
       placeholder="パスワード"
       autoComplete="password"/>
     </AuthForm>
@@ -72,7 +65,7 @@ export function CheckEmailForm({ email, error, isFormValid, emailHandler, submit
   return (
     <>
     <AuthForm title="メールアドレスで新規登録" submit={submit} error={error} buttonTxt="確認用メールを送信" isFormValid={isFormValid}>
-      <AuthText type="email" value={email} onChange={emailHandler}
+      <InputText type="email" value={email} onChange={emailHandler}
       placeholder="メールアドレス"
       autoComplete="email" disabled={true}/>
     </AuthForm>

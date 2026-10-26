@@ -1,9 +1,10 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { IconSearch } from "@tabler/icons-react";
 
 import { TagContent } from "@/src/shared/components/common/TextContent";
+import { InputText } from "@/src/shared/components/ui/Text";
 import { useTag } from "../hooks";
-import { IconSearch } from "@tabler/icons-react";
 
 type TagPaneProps = {
   ref?: React.Ref<HTMLDivElement>;
@@ -33,36 +34,12 @@ function SearchTagText({onclick}: {onclick: (query: string)=>void}) {
   const { sortCriteria, sortTagsByName, sortTagsByCount } = useTag();
 
   const [text, setText] = useState("");
-  const [isCompact, setIsCompact] = useState(false);
-  const searchRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-  const handleScroll = () => {
-    if (!searchRef.current) return;
-
-    const { top } = searchRef.current.getBoundingClientRect();
-
-    setIsCompact(top <= 0);
-  };
-
-  window.addEventListener("scroll", handleScroll, { passive: true });
-
-  return () => {
-    window.removeEventListener("scroll", handleScroll);
-  };
-  }, []);
 
   return (
     <>
-      <div ref={searchRef} className={`sticky flex justify-between mx-2 rounded-sm bg-content border-line border-2
-      has-[input:focus]:border-accent transition-[height] duration-300 ease-in h-7`}>
-        <input
-          type="text" autoCapitalize="off"
-          className="flex-1 focus-visible:outline-none"
-          onChange={(e) => setText(e.target.value)}
-        />
-        <button onClick={()=>onclick(text)} className="px-1 hover:brightness-98"><IconSearch className="size-4"/></button>
-      </div>
+      <InputText type="text" onChange={(e) => setText(e.target.value)}>
+        <button onClick={()=>onclick(text)} className="hover:brightness-98"><IconSearch className="size-4"/></button>
+      </InputText>
       <div className="flex items-center">
         <p>並び替え：</p>
         <div className="flex gap-1 p-0.5">
