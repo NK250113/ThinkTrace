@@ -13,7 +13,7 @@ export async function login(
   });
 
   if (error) {
-    throw new Error("ログインに失敗しました");
+    throw new Error(error.content.message);
   }
 
   return data;
@@ -31,7 +31,7 @@ export async function getCurrentUser() {
   const { data, error } = await client.GET("/api/auth/me", {});
 
   if (error) {
-    return error.message;
+    throw new Error(error.content.message);
   }
 
   return data;
