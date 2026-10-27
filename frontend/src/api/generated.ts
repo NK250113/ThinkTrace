@@ -212,22 +212,12 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        /** ErrorDetail */
-        ErrorDetail: {
+        /** ErrorResponse */
+        ErrorResponse: {
             /** Code */
             code: string;
             /** Message */
             message: string;
-        };
-        /** ErrorResponse */
-        ErrorResponse: {
-            /** Status Code */
-            status_code: number;
-            content: components["schemas"]["ErrorDetail"];
-            /** Headers */
-            headers?: {
-                [key: string]: unknown;
-            };
         };
         /** HTTPValidationError */
         HTTPValidationError: {

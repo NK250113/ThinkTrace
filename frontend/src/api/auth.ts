@@ -12,7 +12,7 @@ export async function login(
   });
 
   if (error) {
-    throw new Error(error.content.message);
+    throw new Error(error.message);
   }
 
   return data;
@@ -27,10 +27,13 @@ export async function logout() {
 }
 
 export async function getCurrentUser() {
-  const { data, error } = await client.GET("/api/auth/me", {});
+  const { data, error, response } = await client.GET("/api/auth/me", {});
 
   if (error) {
-    throw new Error(error.content.message);
+    console.log(error.message);
+    if (response.status === 401) return null;
+
+    throw new Error(error.message);
   }
 
   return data;

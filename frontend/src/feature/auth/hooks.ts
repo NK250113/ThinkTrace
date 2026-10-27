@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { checkEmail, login, signup } from "./services";
 
+import { checkEmail, login, signup } from "./services";
 import { validateEmail, validatePassword, validateUsername } from "./utils";
+import { useReturnToPath } from "@/src/shared/utils/redirect";
 
 export function useLogin() {
   const [email, setEmail] = useState("");
@@ -13,6 +14,7 @@ export function useLogin() {
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [isPasswordValid, setIsPasswordValid] = useState(false);
   const isFormValid = isEmailValid && isPasswordValid;
+  const returnToPath = useReturnToPath();
 
   const emailHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -46,10 +48,8 @@ export function useLogin() {
       setError(err.message);
     });
     if (token) {
-      const navigate = useNavigate();
-      navigate("/think");
+      returnToPath();
     }
-    // いずれはRoute Handlerを利用してHttpOnly Cookieでトークンを管理するように
   };
 
   return {

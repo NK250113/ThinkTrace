@@ -2,6 +2,8 @@
 import { useEffect, useState } from 'react';
 
 import { getNote, getTags, searchNotes } from './services';
+import { useRequireAuth } from '@/src/shared/utils/redirect';
+import { getCurrentUser } from "@/src/api/auth";
 
 export type TagInfo = {
   id: number;
@@ -13,6 +15,10 @@ export type TagInfo = {
 export function useTag() {
   const [allTags, setAllTags] = useState<Array<TagInfo>>([]);
   const [sortCriteria, setSortCriteria] = useState<"name"|"count">("count");
+  const [isAuthenticated, setIsAuthenticated] =
+    useState<boolean | null>(null);
+
+  useRequireAuth(isAuthenticated);
 
   async function fetchTags() {
     type TagData = {
@@ -26,6 +32,20 @@ export function useTag() {
     ));
   }
   useEffect(() => {
+    const initialize = async () => {
+      try {
+        const data = await getCurrentUser();
+        if (data === null) {
+          setIsAuthenticated(false);
+          return;
+        }
+        setIsAuthenticated(true);
+      } catch (error) {
+        console.log(error);
+        setIsAuthenticated(false);
+      }
+    };
+    void initialize();
     fetchTags();
     if (sortCriteria === "count") {
       sortTagsByCount();
