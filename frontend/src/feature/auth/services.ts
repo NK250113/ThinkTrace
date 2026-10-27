@@ -5,7 +5,7 @@ type loginCredentials = {
   password: string;
 };
 export async function login({ email, password }: loginCredentials) {
-  const { data, error } = await client.POST("/api/login", {
+  const { data, error } = await client.POST("/api/auth/login", {
     body: {
       email,
       password,
@@ -24,7 +24,7 @@ type signupCredentials = {
 };
 
 export async function signup({ email, password, username }: signupCredentials) {
-  const { data, error } = await client.POST("/api/signup/confirm", {
+  const { data, error } = await client.POST("/api/auth/signup/confirm", {
     body: {
       email,
       password,
@@ -41,7 +41,7 @@ type checkEmailCredentials = {
   email: string;
 };
 export async function checkEmail({ email }: checkEmailCredentials) {
-  const { data, error } = await client.POST("/api/signup/send", {
+  const { data, error } = await client.POST("/api/auth/signup/send", {
     body: {
       email,
     },

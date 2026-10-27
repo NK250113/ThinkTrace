@@ -1,10 +1,11 @@
 import { client } from "./client";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export async function login(
   email: string,
   password: string,
 ) {
-  const { data, error } = await client.POST("/api/login", {
+  const { data, error } = await client.POST("/api/auth/login", {
     body: {
       email,
       password,
@@ -19,7 +20,7 @@ export async function login(
 }
 
 export async function logout() {
-  const { error } = await client.POST("/api/logout", {});
+  const { error } = await client.POST("/api/auth/logout", {});
 
   if (error) {
     throw new Error("ログアウトに失敗しました");
@@ -34,4 +35,18 @@ export async function getCurrentUser() {
   }
 
   return data;
+}
+
+export async function useRequireAuth(isAuthenticated: boolean | null) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // 認証
+  if (isAuthenticated === false) {
+    const query = searchParams.toString();
+    const returnTo = query ? `${pathname}?${query}` : pathname;
+
+    router.replace(`/login?returnTo=${encodeURIComponent(returnTo)}`);
+  }
 }
