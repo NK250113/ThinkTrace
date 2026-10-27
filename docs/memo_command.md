@@ -31,6 +31,9 @@ git add .
 git commit -m "ログイン画面を追加"
 git push
 
+### 入れ忘れに気づいたとき
+git commit --amend --no-edit
+
 ### バージョン更新
 git add .
 git commit -m "Release v1.0.0"
