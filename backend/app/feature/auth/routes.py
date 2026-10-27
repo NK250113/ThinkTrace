@@ -15,6 +15,7 @@ router = APIRouter(prefix="/api/auth")
     response_model=schemas.UserResponse,
     responses=http_responses.get(
         status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_422_UNPROCESSABLE_CONTENT,
     ),
 )
 async def get_user_info(user: Annotated[schemas.UserResponse, Depends(get_current_user)]) -> schemas.UserResponse:
@@ -71,6 +72,7 @@ async def signup_user(
     response_model=schemas.Message,
     responses=http_responses.get(
         status.HTTP_401_UNAUTHORIZED,
+        status.HTTP_422_UNPROCESSABLE_CONTENT,
     ),
 )
 async def login_user(

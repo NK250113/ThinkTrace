@@ -212,12 +212,22 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        /** ErrorResponse */
-        ErrorResponse: {
+        /** ErrorDetail */
+        ErrorDetail: {
             /** Code */
             code: string;
             /** Message */
             message: string;
+        };
+        /** ErrorResponse */
+        ErrorResponse: {
+            /** Status Code */
+            status_code: number;
+            content: components["schemas"]["ErrorDetail"];
+            /** Headers */
+            headers?: {
+                [key: string]: unknown;
+            };
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -389,13 +399,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description Unprocessable Content */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };
@@ -515,13 +525,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
-            /** @description Validation Error */
+            /** @description Unprocessable Content */
             422: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };
