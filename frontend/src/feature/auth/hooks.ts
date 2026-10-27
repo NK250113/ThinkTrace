@@ -2,25 +2,9 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useRouter, useSearchParams } from "next/navigation";
 import { checkEmail, login, signup } from "./services";
 
 import { validateEmail, validatePassword, validateUsername } from "./utils";
-
-function returnToPath() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-
-  // FastAPIの認証APIが成功した後
-  const returnTo = searchParams.get("returnTo");
-
-  const safePath =
-    returnTo?.startsWith("/") && !returnTo.startsWith("//")
-      ? returnTo
-      : "/think";
-
-  router.replace(safePath);
-}
 
 export function useLogin() {
   const [email, setEmail] = useState("");
