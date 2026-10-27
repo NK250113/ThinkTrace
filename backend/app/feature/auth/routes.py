@@ -7,8 +7,18 @@ from app.core.responses import http_responses
 from app.feature.auth import schemas, service, deps
 from app.core.config import settings
 from app.core.models import RefreshToken
+from app.feature.auth.deps import get_current_user
 
 router = APIRouter(prefix="/api/auth")
+
+@router.get("/me",
+    response_model=schemas.UserResponse,
+    responses=http_responses.get(
+        status.HTTP_401_UNAUTHORIZED,
+    ),
+)
+async def get_user_info(user: Annotated[schemas.UserResponse, Depends(get_current_user)]) -> schemas.UserResponse:
+    return user
 
 @router.post("/signup/send",
     response_model=None,

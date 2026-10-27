@@ -28,10 +28,10 @@ export async function logout() {
 }
 
 export async function getCurrentUser() {
-  const { data, error } = await client.GET("/api/users/me", {});
+  const { data, error } = await client.GET("/api/auth/me", {});
 
   if (error) {
-    return null;
+    return error.message;
   }
 
   return data;

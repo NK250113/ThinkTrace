@@ -11,10 +11,3 @@ from app.feature.auth.schemas import UserResponse
 
 router = APIRouter(prefix="/api/users")
 
-@router.post("/me",
-    response_model=UserResponse,
-    responses={
-    }
-)
-async def get_user_info(user: Annotated[UserResponse, Depends(get_current_user)]) -> UserResponse:
-    return user
