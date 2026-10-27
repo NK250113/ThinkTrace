@@ -3,7 +3,7 @@ import { useState, type ReactNode } from "react";
 
 export function BaseModal({on, fn, children}: {on: boolean; fn: (event: React.MouseEvent<HTMLDivElement>) => void; children: ReactNode;}) {
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center backdrop-blur-xs ${on ? "" : "hidden"}`} onClick={fn}>
+    <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs ${on ? "" : "hidden"}`} onClick={fn}>
       <div className="w-full max-w-md rounded-xl shadow-line shadow-[0_0_5px] overflow-hidden">
         {children}
       </div>
